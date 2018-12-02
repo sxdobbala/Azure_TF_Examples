@@ -1,1 +1,0 @@
-{"Modules":[{"Source":"git::https://github.optum.com/CommercialCloud-EAC/terraform_common//terraform_module/namespace?ref=v1.2.1","Key":"1.namespace;git::https://github.optum.com/CommercialCloud-EAC/terraform_common//terraform_module/namespace?ref=v1.2.1","Version":"","Dir":".terraform/modules/260fbb2d22ce7fae813cdce937ee080f","Root":"terraform_module/namespace"}]}
