@@ -1,0 +1,25 @@
+# pack-refs with: peeled fully-peeled 
+f620353c8fc607b5283e9a15ed032b07ace0e16f refs/remotes/origin/DONT_MERGE
+d0f0199d11a40d353d7d50a090b4bb73e4adcc8b refs/remotes/origin/ajohanss-patch-1
+e2981e376d790a83d511bebab19722256fb24c48 refs/remotes/origin/ajohanss-patch-2
+dec32d1677d530d860d91b925295a25195c0d0b2 refs/remotes/origin/ajohanss-patch-3
+c68b28f78a97118af37acc06ffa7c406cf72a353 refs/remotes/origin/anejmeh-patch-1
+b0bce5a3cb6719d8b6255677fec39574f0f79102 refs/remotes/origin/appGateway
+750f1fa6394e4b1a3f4cb1cc77880fb038a96272 refs/remotes/origin/master
+bb8cb25934892710672e5ba706e93a7873761a35 refs/remotes/origin/module_readmes
+0c2330a3c4a58fa61edf17ba4cbc34310b0b53bd refs/remotes/origin/pr30a
+4fac11b52414e4261d5a94d817193fdfa74964d0 refs/remotes/origin/removeCounts
+2af2d344212346848fd3b28a011dfc99979f88ee refs/remotes/origin/rulesSubmodules
+750f1fa6394e4b1a3f4cb1cc77880fb038a96272 refs/tags/2.0.0-beta2
+31de13839512ad468c3bda4cc623024e5cc98cc6 refs/tags/v1.0.0
+a4ad2f21040edc605a9ecf65908d5d3ef8a8f9a0 refs/tags/v1.0.1
+5b0173de6cdf4fde83494cb9bd905133dc7c63d8 refs/tags/v1.0.2
+c2b8c06cecd899b5dc3fe01a3a4100d43498b06d refs/tags/v1.0.3
+96ccf9527d24d7554c0de40cb5c3e7e2a801e136 refs/tags/v1.0.4
+db3fcf8db29bfa1fa449fcf3d9f033779684d1d0 refs/tags/v1.0.5
+0df41e78fcbed65c97880413adb6c355fc866228 refs/tags/v1.0.6
+0df41e78fcbed65c97880413adb6c355fc866228 refs/tags/v1.0.7
+b277b3bd36dab75917c9f1cb09a3cdef1dfa7b1a refs/tags/v1.0.8
+d4c48699335b9286e20837958f09fa2c9f827bb1 refs/tags/v1.0.9
+d672747efdd8fa27ef523536478305ded8f91ec2 refs/tags/v2.0.0-beta1
+750f1fa6394e4b1a3f4cb1cc77880fb038a96272 refs/tags/v2.0.0-beta2

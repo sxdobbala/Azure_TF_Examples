@@ -1,0 +1,55 @@
+#!/usr/bin/groovy
+@Library(['com.optum.jenkins.pipelines.templates.terraform', 'com.optum.jenkins.pipeline.library']) _
+
+if (env.BRANCH_NAME == "master" || env.BRANCH_NAME == "oea_workbench") {
+
+    def resourceGroup, optumfile, dockerAgent
+
+    node() {
+        checkout scm
+
+        optumfile = readYaml file: "Optumfile.yml"
+        resourceGroup = (optumfile.pipeline.terraform.azure.environments.keySet() as List)[0]
+        dockerAgent = optumfile.pipeline.terraform.azure.node
+        
+    }
+
+    withCredentials([usernamePassword(credentialsId: "OEA_WORKBENCH_USER", usernameVariable: "OEA_ACCOUNT_USER", passwordVariable: "OEA_ACCOUNT_PASS"),
+                    usernamePassword(credentialsId: "OEA_WORKBENCH_VM_USER_PASS", usernameVariable: "OEA_VM_USER", passwordVariable: "OEA_VM_PASS")]) {
+        node(dockerAgent) {
+            stage("Create Workbench and VM") {
+                sh """#!/bin/bash
+                . /etc/profile.d/jenkins.sh
+
+                URL="azure-workbench-api-oea-workbench-nonprod.ocp-ctc-core-nonprod.optum.com/api/subs/redbox-prod/redbox"
+
+                HTTP_RESPONSE=\$(curl --silent --write-out "HTTPSTATUS:%{http_code}" -X POST \
+                    -u ${OEA_ACCOUNT_USER}:${OEA_ACCOUNT_PASS} \
+                    -H 'Content-Type: application/json' \
+                    -d '{
+                        "resourceGroup" : "${resourceGroup}",
+                        "vmAdminUsername" : "${OEA_VM_USER}",
+                        "vmAdminPassword" : "${OEA_VM_PASS}",
+                        "vmSize" : "Standard_DS3_v2",
+                        "vmStorageOsManagedDiskType" : null,
+                        "vmStorageDataManagedDiskType" : null,
+                        "vmStorageDataDiskSizeGb" : null,
+                        "globalTags" : { }
+                    }' \
+                    \$URL)
+
+                HTTP_BODY=\$(echo \$HTTP_RESPONSE | sed -e 's/HTTPSTATUS\\:.*//g')
+
+                HTTP_STATUS=\$(echo \$HTTP_RESPONSE | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+
+                echo "\n\$HTTP_BODY"
+
+                if [ ! \$HTTP_STATUS -eq 202  ]; then
+                    echo "\nOEA Workbench API returned unexpected status code. Expected: 202. Got: \$HTTP_STATUS"
+                    exit 1
+                fi
+                """
+            }
+        }
+    }
+}

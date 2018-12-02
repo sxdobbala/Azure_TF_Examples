@@ -1,0 +1,1 @@
+{"Modules":[{"Source":"git::https://github.optum.com/CommercialCloud-EAC/azure_resource_group//terraform_module?ref=v1.0.1","Key":"1.resource_group;git::https://github.optum.com/CommercialCloud-EAC/azure_resource_group//terraform_module?ref=v1.0.1","Version":"","Dir":".terraform/modules/c448802e7f330eca39b4159476b33f70","Root":"terraform_module"}]}

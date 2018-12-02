@@ -1,0 +1,11 @@
+.terraform
+terraform.tfstate*
+**/.DS_Store
+spec/fixtures
+**/__pycache__
+**/.pytest_cache
+.vscode
+tests/tf.apply.log
+tests/tf.destroy.log
+tests/tf.init.log
+tests/examples

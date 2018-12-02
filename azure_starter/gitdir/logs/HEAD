@@ -1,0 +1,5 @@
+0000000000000000000000000000000000000000 0a187a701abeaccc9767b66875785285a4578231 root <root@localhost.localdomain> 1538706789 -0500	clone: from https://github.optum.com/ldobbala/azure_starter.git
+0a187a701abeaccc9767b66875785285a4578231 d5f40fe331adc9f586fed7df893e4fb3d3fa82fa root <root@localhost.localdomain> 1538724970 -0500	checkout: moving from master to oea_workbench
+d5f40fe331adc9f586fed7df893e4fb3d3fa82fa fcf67d99b1aa4bba482f431d6273ad6bfcbabf3b root <root@localhost.localdomain> 1538725856 -0500	commit: updated Jenkins file to Trigger the Pipeline
+fcf67d99b1aa4bba482f431d6273ad6bfcbabf3b 5623ca93ebf45b9dec11dc7bce64b2ba677899f7 root <root@localhost.localdomain> 1538785467 -0500	commit: added a starter debug folder to track errors
+5623ca93ebf45b9dec11dc7bce64b2ba677899f7 7f6d9e9ce05bab4b7d377e81946525b12be46113 root <root@localhost.localdomain> 1538785515 -0500	pull: Merge made by the 'recursive' strategy.
