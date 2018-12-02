@@ -1,2 +1,2 @@
-# EaC
-Everything as Code Repo
+# TFaC
+TF as Code Repo
