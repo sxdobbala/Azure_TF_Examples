@@ -1,0 +1,39 @@
+@Library('com.optum.jenkins.pipeline.library@master') _
+
+pipeline {
+//"agent none" is used so that the approval does not hold up an agent while it waits for input
+  agent none
+
+  stages {
+    stage ('Approval') {
+      steps {
+        //'submitter' parameter is optional - leave blank for anonymous approval, can be a secure group, set up with "Configure Global Security" in a Jenkins instance
+        glApproval message: 'Approve it?'
+      }
+    }
+    stage ('Execution'){
+      agent {label 'docker-maven-slave'}
+      steps{
+        echo 'If you say so'
+      }
+    }
+  }
+  post {
+    always {
+      echo 'This will always run'
+    }
+    success {
+      echo 'This will run only if successful'
+    }
+    failure {
+      echo 'This will run only if failed'
+    }
+    unstable {
+      echo 'This will run only if the run was marked as unstable'
+    }
+    changed {
+      echo 'This will run only if the state of the Pipeline has changed'
+      echo 'For example, if the Pipeline was previously failing but is now successful'
+    }
+  }
+}

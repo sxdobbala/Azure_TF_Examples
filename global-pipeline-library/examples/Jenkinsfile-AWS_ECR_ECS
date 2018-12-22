@@ -1,0 +1,52 @@
+@Library('com.optum.jenkins.pipeline.library@master') _
+
+//This is an example of a jenkins file that will build your docker image, push it up to AWS ECR (AWS docker repository)
+//then forces the AWS ECS cluster that's using that docker image to use the latest image.
+//This is step is only needed if you're not using fargate as your ECS instance type. If using fargate, AWS manages this for you
+
+pipeline {
+  agent {
+    label 'docker-awscli-slave' // your docker template needs to have the aws-cli
+  }
+
+  environment {}
+
+  stages {
+    stage ('AWS Docker Build & Push') {
+  		steps{
+  				glAmazonEcrImageBuildPush ecrName: "dev", //The name of the AWS ECR storing your docker image
+          ecrUrl: "1234567890.dkr.ecr.us-east-1.amazonaws.com", //url of your AWS ECR without the https://
+          region: "us-east-1", //region where your AWS ECR is located
+          credentialsId: "aws" //credentials to login into AWS
+  		}
+  	}
+
+    stage ('Force New AWS ECS Cluster Deployment ') {
+  		steps {
+  			 glAmazonEcsDeployment ecsCluster: "dashboard", //The name of the AWS ECS cluster
+         ecsService: "dashboard-service", //The name of ECS cluster's service
+         region: "us-east-1" //region where your ECS cluster is located
+         credentialsId: "aws", //credentials to login into AWS
+  		}
+  	}
+  }
+
+  post {
+    always {
+      echo 'This will always run'
+    }
+    success {
+      echo 'This will run only if successful'
+    }
+    failure {
+      echo 'This will run only if failed'
+    }
+    unstable {
+      echo 'This will run only if the run was marked as unstable'
+    }
+    changed {
+      echo 'This will run only if the state of the Pipeline has changed'
+      echo 'For example, if the Pipeline was previously failing but is now successful'
+    }
+  }
+}

@@ -1,0 +1,34 @@
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Intellij
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Mac
+.DS_Store
+
+# Maven
+log/
+target/
+
+# Groovy
+build/
+out/
+
+# Gradle
+.gradle
+retrievedGPLibForTest/
+
+# Logging
+*.log
+bin
+
+# Sonar
+.scanner*/
+.sonar*/
+

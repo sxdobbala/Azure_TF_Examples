@@ -1,0 +1,59 @@
+#!/usr/bin/env groovy
+
+@Library("com.optum.jenkins.pipeline.library@Feature") _
+@Library("Global-Optum.Pipe_line") _
+// @Library("should.not.retrieve") _
+@Library(["GlobalOptumPipeline123", "com.optum.jenkins.123@123", "testing"]) _
+// can read library with space formatting
+    @Library(["GlobalOptumPipeline456",
+          "com.optum.jenkins@v1.0.0",
+          "testing@12"]) _
+
+pipeline {
+  agent {
+    label 'docker-maven-slave'
+  }
+  environment {
+    GIT_CREDENTIALS_ID = 'sonar_tech'
+    TECH_USER ='devopseng_tech'
+  }
+
+  stages {
+    stage ('Build') {
+      steps {
+        glMavenBuild additionalProps:['ci.env':''] // ci.env needed if using UHG parent pom
+      }
+    }
+    stage('Sonar') {
+      steps {
+        glSonarMavenScan productName:"DEVOPS", projectName:"demo-maven-app", gitUserCredentialsId:"${env.GIT_CREDENTIALS_ID}"
+      }
+    }
+    stage('Artifactory') {
+      steps {
+        glMavenArtifactoryDeploy artifactoryUserCredentialsId:"${env.TECH_USER}"
+      }
+    }
+  }
+  post {
+    always {
+      echo 'This will always run'
+      emailext body:  "Build URL: ${BUILD_URL}",
+        subject: "$currentBuild.currentResult-$JOB_NAME",
+        to: 'emailAddressGoesHere@optum.com'
+    }
+    success {
+      echo 'This will run only if successful'
+    }
+    failure {
+      echo 'This will run only if failed'
+    }
+    unstable {
+      echo 'This will run only if the run was marked as unstable'
+    }
+    changed {
+      echo 'This will run only if the state of the Pipeline has changed'
+      echo 'For example, if the Pipeline was previously failing but is now successful'
+    }
+  }
+}

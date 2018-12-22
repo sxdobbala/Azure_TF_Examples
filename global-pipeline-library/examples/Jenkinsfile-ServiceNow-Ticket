@@ -1,0 +1,65 @@
+#!/usr/bin/env groovy
+
+@Library("com.optum.jenkins.pipeline.library@master") _
+
+pipeline {
+  agent none
+  environment {
+    SN_USER = 'sn_read_user'
+  }
+  stages {
+    stage ('Commit') {
+      agent {
+        label 'docker-maven-slave'
+      }
+     steps {
+       glServiceNowTicketCommitGet [:]
+       // Do commit steps
+      }
+    }
+    stage ('GetTicket') {
+      agent {
+        label 'docker-maven-slave'
+      }
+      steps {
+        glServiceNowTicketVerify credentials : "${env.SN_USER}", isChangeWindow : false // depending on workflow, can verify ticket prior to approval
+        glServiceNowTicketGet credentials : "${env.SN_USER}"
+      }
+    }
+    stage ('Production Approval') {
+      steps {
+        glApproval message: 'Approve?', submitter: 'CM_SVN', askId: 'poc', displayTicket: true
+      }
+    }
+    stage ('Prod Deploy') {
+      agent {
+        label 'docker-maven-slave'
+      }
+      steps {
+        glServiceNowTicketVerify credentials : "${env.SN_USER}"
+        echo "Only get to this step if ticket verified"
+      }
+    }
+  }
+  post {
+    always {
+      echo 'This will always run'
+      emailext body:  "Build URL: ${BUILD_URL}",
+        subject: "$currentBuild.currentResult-$JOB_NAME",
+        to: 'nobody@optum.com'
+    }
+    success {
+      echo 'This will run only if successful'
+    }
+    failure {
+      echo 'This will run only if failed'
+    }
+    unstable {
+      echo 'This will run only if the run was marked as unstable'
+    }
+    changed {
+      echo 'This will run only if the state of the Pipeline has changed'
+      echo 'For example, if the Pipeline was previously failing but is now successful'
+    }
+  }
+}

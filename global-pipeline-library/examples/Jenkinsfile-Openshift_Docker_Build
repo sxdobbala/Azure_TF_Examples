@@ -1,0 +1,49 @@
+#!/usr/bin/env groovy
+
+//In order to make this method idempotent/part of a cicd process, there must be at least a three pod limit on your project.
+//Deployments beyond the first will not work if the pod limit is two or less.
+
+
+@Library("com.optum.jenkins.pipeline.library@master") _
+
+
+pipeline {
+  agent {
+    label 'docker-maven-slave'
+  }
+  environment {
+    OPENSHIFT_CREDENTIALS_ID = 'devopseng_tech'
+  }
+
+  stages {
+    stage ('Build and Run Docker Image') {
+      steps {
+        //This Dockerfile could also be cloned from Github into the Jenkins workspace
+        sh '''echo 'FROM docker.optum.com/aps/eap64:2.0' >> Dockerfile'''
+        //COPY is better for when the war/jar/ear is built in the Jenkins workspace
+        //for example: 'COPY web/target/ROOT.war /opt/eap/standalone/deployments/ROOT.war'
+        sh '''echo 'RUN curl http://repo1.uhc.com/artifactory/UHG-Releases/com/optum/microemrpoc/microemr/1.537/microemr-1.537.war -o /opt/eap/standalone/deployments/ROOT.war' >> Dockerfile'''
+        sh 'cat Dockerfile'
+        glOpenshiftBuildAndRun credentials: "$env.OPENSHIFT_CREDENTIALS_ID", ocpUrl: "https://ocp-ctc-core-nonprod.optum.com", project: 'project', serviceName: 'service', path: '.', port: '8080', wait: true
+      }
+    }
+  }
+  post {
+    always {
+      echo 'This will always run'
+    }
+    success {
+      echo 'This will run only if successful'
+    }
+    failure {
+      echo 'This will run only if failed'
+    }
+    unstable {
+      echo 'This will run only if the run was marked as unstable'
+    }
+    changed {
+      echo 'This will run only if the state of the Pipeline has changed'
+      echo 'For example, if the Pipeline was previously failing but is now successful'
+    }
+  }
+}

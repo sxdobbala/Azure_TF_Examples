@@ -1,0 +1,139 @@
+#!/usr/bin/env groovy
+
+@Library("com.optum.jenkins.pipeline.library@master") _
+
+// This is an example Jenkinfile where we 
+//   1. package SQL scripts as a zip archive using a custom shell script
+//   2. publish package to Artifactory
+//   3. import package to XL Deploy
+//   4. and deploy to DEV environment with XL Deploy
+
+def PIPELINE_VERSION = new Date().format('yyyy.MM.dd') + "-${BUILD_NUMBER}"
+
+// Artifactory Vars
+def ARTIFACTORY_SERVER    = Artifactory.server '-1381075113@1460408611321'
+def ARTIFACTORY_BASE_URL  = "https://repo1.uhc.com/artifactory"
+def ARTIFACTORY_REPO      = "UHG-Releases"
+def ARTIFACTORY_GROUPID   = "com/optum/xld"
+
+// XL Deploy Vars
+def XLD_WORKSPACE       = "cdeSuite"
+def XLD_APP_NAME        = "howtoSQLServer"
+def XLD_APP_VERSION     = "${PIPELINE_VERSION}"
+def XLD_DEPLOYABLE_TYPE = "sql.SqlScripts"
+def XLD_DEPLOYABLE_NAME = "myVehicles"
+def XLD_DEPLOYABLE_TAGS = ["myVehicles","ghg"]
+def XLD_DEPLOYABLE_URL  = "${ARTIFACTORY_BASE_URL}/${ARTIFACTORY_REPO}/${ARTIFACTORY_GROUPID}/${XLD_WORKSPACE}/${XLD_APP_NAME}/${PIPELINE_VERSION}/${XLD_DEPLOYABLE_NAME}.zip"
+def JENKINS_CRED_XLD    = "2f95ed19-e6f3-4c78-b9d6-95113959df3f"
+def XLD_ENV_ID          = "Environments/${XLD_WORKSPACE}/DEV"
+def XLD_PKG_ID          = "Applications/${XLD_WORKSPACE}/${XLD_APP_NAME}/${PIPELINE_VERSION}"
+
+// Custom Build Vars
+def SQL_SRC_FOLDER    = "howtoSQLServer/sql"
+def SQL_PKG_NAME    = "${XLD_DEPLOYABLE_NAME}"
+
+def uploadArtifactorySpec = """{
+  "files": [
+  {
+    "pattern": "${SQL_SRC_FOLDER}/*.zip",
+    "target":  "${ARTIFACTORY_REPO}/${ARTIFACTORY_GROUPID}/${XLD_WORKSPACE}/${XLD_APP_NAME}/${PIPELINE_VERSION}/"
+  }
+ ]
+}"""
+
+pipeline
+{
+  agent
+  {
+    label 'docker-maven-slave'
+  }
+  stages
+  {
+    stage ('SET_DISPLAYNAME') // This step is cosmetic
+    {
+      steps
+      {
+        echo "PIPELINE_VERSION: ${PIPELINE_VERSION}"
+        script
+        {
+          currentBuild.displayName = "${PIPELINE_VERSION}"
+        }
+      }
+    }
+    stage ('Package')  // Build my package
+    {
+      steps
+      {
+        echo "Packaging SQL Scripts as a zip archive."
+        script
+        {
+          sh "./createPackage.sh ${SQL_SRC_FOLDER} ${SQL_PKG_NAME} ${PIPELINE_VERSION}"
+          //sh "cd ${SQL_SRC_FOLDER}; pwd; zip ${SQL_PKG_NAME}.zip *.sql; ls -al;"
+        }
+      }
+    }
+    stage ('Artifactory')  // Now upload package to Artifactory
+    {
+      steps
+      {
+        echo "Upload your package to Artifactory if you haven't already done so"
+        script
+        {
+          ARTIFACTORY_SERVER.upload(uploadArtifactorySpec)
+        }
+      }
+    }
+    stage('XLDeploy_ImportPackage')
+    {
+      steps
+      {
+        script
+        {
+        echo "Step 1.  Create XL Deploy package manifest XML"
+        String manifestXML = glXLDeployGenerateManifestXML('xldWorkspace':XLD_WORKSPACE,'xldAppName':XLD_APP_NAME,'xldAppVersion':XLD_APP_VERSION)
+        echo "Step 2.  Add deployable to manifest XML. Repeat this for each deployable"
+        manifestXML = glXLDeployAddDeployable('xldManifestXML':manifestXML,'xldType':XLD_DEPLOYABLE_TYPE,'xldName':XLD_DEPLOYABLE_NAME,'fileUri':XLD_DEPLOYABLE_URL,'tags':XLD_DEPLOYABLE_TAGS)
+        echo "Step 3.  Now import package to XL Deploy"
+        glXLDeployPackageImport('xldManifestXML':manifestXML, 'xldServerLabel':"Production", 'xldCredentialID':"${JENKINS_CRED_XLD}")
+        }
+      }
+    }
+    stage('XLDeploy_Deploy')
+    {
+      when { branch 'release' }
+      steps
+      {
+        script
+        {
+        glXLDeployPackageDeploy 'xldServerLabel':"Production", 'xldEnvironmentID':"${XLD_ENV_ID}", 'xldPackageID':"${XLD_PKG_ID}", 'xldCredentialID':"${JENKINS_CRED_XLD}"
+        }
+      }
+    }
+   }
+  post
+    {
+    always
+    {
+      echo 'This will always run'
+      emailext body: "Build URL: ${BUILD_URL}",
+      subject: "$currentBuild.currentResult-$JOB_NAME",
+      to: 'nobody@optum.com'
+    }
+    success
+    {
+      echo 'This will run only if successful'
+    }
+    failure
+    {
+      echo 'This will run only if failed'
+    }
+    unstable
+    {
+      echo 'This will run only if the run was marked as unstable'
+    }
+    changed
+    {
+      echo 'This will run only if the state of the Pipeline has changed'
+    }
+  }
+}

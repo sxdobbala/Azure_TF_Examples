@@ -1,0 +1,49 @@
+#!/usr/bin/env groovy
+
+@Library("com.optum.jenkins.pipeline.library@master") _
+
+pipeline {
+  agent {
+    label 'docker-maven-slave'
+  }
+  environment {
+    DOCKER_CREDENTIALS_ID = 'devopseng_tech'
+  }
+
+  stages {
+    stage ('Create docker repository if not exists') {
+      steps {
+        glDockerRepoCreate dockerCredentialsId:"$env.DOCKER_CREDENTIALS_ID",
+                           dockerHost:"docker.optum.com",
+                           namespace:"devops_engineering",
+                           repository:"repo"
+      }
+    }
+    stage ('Build and Deploy Docker Image to DTR') {
+      steps {
+        glDockerImageBuildPush dockerCredentialsId:"$env.DOCKER_CREDENTIALS_ID", tag:"docker.optum.com/devops_engineering/repo:dev"
+      }
+    }
+  }
+  post {
+    always {
+      echo 'This will always run'
+      emailext body:  "Build URL: ${BUILD_URL}",
+        subject: "$currentBuild.currentResult-$JOB_NAME",
+        to: 'emailAddressGoesHere@optum.com'
+    }
+    success {
+      echo 'This will run only if successful'
+    }
+    failure {
+      echo 'This will run only if failed'
+    }
+    unstable {
+      echo 'This will run only if the run was marked as unstable'
+    }
+    changed {
+      echo 'This will run only if the state of the Pipeline has changed'
+      echo 'For example, if the Pipeline was previously failing but is now successful'
+    }
+  }
+}

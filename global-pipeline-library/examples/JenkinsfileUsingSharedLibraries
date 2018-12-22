@@ -1,0 +1,56 @@
+#!/usr/bin/env groovy
+@Library("global-pipeline-library@master") _
+// This is an example Jenkinfile where we build and then execute a Sonar Scan and Fortify Scan
+// The Jenkins Global Pipeline Library that is being used is: https://github.optum.com/jenkins-pipelines/global-pipeline-library
+pipeline {
+  agent {
+     label 'Windows-WEBEP1552'
+  }
+ stages {
+   stage ('Checkout'){
+     steps {
+      bat 'git config --global core.longpaths true'  
+    glGitCheckoutWin( credentialsId: '0e839662-ff17-40d9-b4a7-34fab7faf282',tag: 'master', url: 'https://github.optum.com/IDWS/idws-dotnet-poc.git' )       }
+  }
+}
+  stage("Build"){
+   steps {
+glDotNetStdPublish( SolutionFilePath : "HelloWorldJenkinsExample/HelloWorldJenkinsExample.sln",csProjFilePath: "HelloWorldJenkinsExample/HelloWorldJenkinsExample/HelloWorldJenkinsExample.csproj",buildConfiguration : "Release", deployBuild : "true",publishProfile : "Dev.pubxml")
+        }
+  }
+ stage("sonarScan"){
+  steps{
+    glDotNetSonarScan( sonarScannerPath :"F:/Build/Agent1/tasks/SonarQubeScannerMsBuildBegin/2.0.0/SonarQubeScannerMsBuild",projectKey : "dotnet-std-jenkins", projectName : "HelloWorldJenkinsExample", projectToScan : "https://github.optum.com/IDWS/idws-dotnet-poc.git", msBuildPath : "C:/Program Files (x86)/MSBuild/14.0/Bin", csProjFilePath : "HelloWorldJenkinsExample/HelloWorldJenkinsExample/HelloWorldJenkinsExample.csproj")
+   }
+ }
+stage("Fortify scan"){
+  steps{
+  glFortifyScanWin( projPath : "HelloWorldJenkinsExample",fortifyFilePath : "HelloWorldJenkinsExample\\HelloWorldJenkinsExample\\FortifyHelloWorldJenkinsExample.bat")
+        }
+     } 
+ }
+ post {
+   always {
+       echo 'This will always run'
+    emailextbody:  "Build URL:${BUILD_URL}",
+       subject:"$currentBuild.currentResult-$JOB_NAME",
+       to: 'noreply@optum.com'
+ }
+success {
+     echo 'This will run only if successful'
+  }
+   failure {
+            echo 'This will run only if failed'
+        }
+  unstable {
+      echo 'This will run only if the run was marked as unstable'
+  }
+  changed {
+            echo 'This will run only if the state of the Pipeline has changed'
+            echo 'For example, if the Pipeline was previously failing but is now successful'
+       }
+  }
+}
+
+ 
+

@@ -1,0 +1,8 @@
+# Status to set the pull request to when in a WIP state
+# 'failure, error, and pending' are the suggested options
+# defaults to pending
+notReadyState: failure
+
+# Allows for checks on commit messages to be ignored
+# defaults to false
+ignoreCommitMessages: true

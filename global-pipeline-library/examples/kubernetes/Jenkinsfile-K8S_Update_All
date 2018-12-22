@@ -1,0 +1,44 @@
+#!/usr/bin/env groovy
+
+//Users can provide any number of input parameters from: envVars, containerImages, limitCpu, limitMem, requestsCpu, requestsMem
+
+@Library("com.optum.jenkins.pipeline.library@refs/remotes/origin/pr/379") _
+
+pipeline {
+  agent{
+  label 'docker-kitchensink-slave'
+  }
+  environment {
+    K8S_CREDENTIALS_ID = 'k8s_token'
+    KUBECTL_VERSION = '1.10.0'
+  }
+
+  stages {
+    stage ('Update Environment Variables, Container Images, and Resources') {
+      steps {
+        //Git clone to get the template
+        git branch: 'master', url: 'https://github.optum.com/brieger/pipeline_test.git'
+        glKubernetesUpdateDeployment credentials: "$env.K8s_CREDENTIALS_ID", cluster: "k8s-prod-ctc-aci.optum.com",namespace: "brieger-sandbox", deploymentName: "busybox", envVars: ["home":"/home/user", "key1":"value1"], limitCpu: "16", limitMem: "33Gi", requestsCpu: "5", requestsMem: "30Gi", containerImages: ["mycontainer":"busybox:1.29.2"] 
+      }
+    }
+    
+  }
+  post {
+    always {
+      echo 'This will always run'
+    }
+    success {
+      echo 'This will run only if successful'
+    }
+    failure {
+      echo 'This will run only if failed'
+    }
+    unstable {
+      echo 'This will run only if the run was marked as unstable'
+    }
+    changed {
+      echo 'This will run only if the state of the Pipeline has changed'
+      echo 'For example, if the Pipeline was previously failing but is now successful'
+    }
+  }
+}

@@ -1,0 +1,44 @@
+#!/usr/bin/env groovy
+
+// Users can provide any number of resource variables to update from: requestsMem, requestsCpu, limitCpu, and limitMem
+
+@Library("com.optum.jenkins.pipeline.library@refs/remotes/origin/pr/379") _
+
+pipeline {
+  agent{
+  label 'docker-kitchensink-slave'
+  }
+  environment {
+    K8S_CREDENTIALS_ID = 'k8s_token'
+    KUBECTL_VERSION = '1.10.0'
+  }
+
+  stages {
+    stage ('Update Resources') {
+      steps {
+        //Git clone to get the template
+        git branch: 'master', url: 'https://github.optum.com/brieger/pipeline_test.git'
+        glKubernetesUpdateDeployment credentials: "$env.K8s_CREDENTIALS_ID", cluster: "k8s-prod-ctc-aci.optum.com",namespace: "brieger-sandbox", deploymentName: "busybox", limitCpu: "2", limitMem: "2Gi", requestsCpu: "1", requestsMem: "1Gi" 
+      }
+    }
+    
+  }
+  post {
+    always {
+      echo 'This will always run'
+    }
+    success {
+      echo 'This will run only if successful'
+    }
+    failure {
+      echo 'This will run only if failed'
+    }
+    unstable {
+      echo 'This will run only if the run was marked as unstable'
+    }
+    changed {
+      echo 'This will run only if the state of the Pipeline has changed'
+      echo 'For example, if the Pipeline was previously failing but is now successful'
+    }
+  }
+}

@@ -1,0 +1,48 @@
+# Code owners are automatically requested for review when someone opens a pull request that modifies code that they own. 
+# Order is important; the last matching pattern takes the most precedence.
+
+# The below owner(s) will be the default owners for everything in this repo. 
+# Unless a later match takes precedence, they will be requested for review when someone opens a pull request.
+* @estarr @mmaday @cruddy
+
+# Assign all Markdown Documentation to these owners for review
+*.md @estarr @mmaday @smaciej
+
+# GPL 
+# OpenShift GPL Changes
+/src/com/optum/jenkins/pipeline/library/openshift/ @rseibe1 @rsites
+
+# Kubernetes GPL Changes 
+/src/com/optum/jenkins/pipeline/library/kubernetes/ @brieger
+
+# Terraform GPL Changes
+/src/com/optum/jenkins/pipeline/library/terraform/ @cruddy
+
+# XLDeploy GPL Changes
+/src/com/optum/jenkins/pipeline/library/xldeploy/ @jgregor9 
+
+# ServiceNow GPL Changes
+/src/com/optum/jenkins/pipeline/library/servicenow/ @cruddy
+
+# Maven & Sonar GPL Changes
+/src/com/optum/jenkins/pipeline/library/maven/ @estarr
+/src/com/optum/jenkins/pipeline/library/sonar/ @estarr
+
+# Docker GPL Changes 
+/src/com/optum/jenkins/pipeline/library/docker/ @mmaday 
+
+# DotNet GPL Changes
+/src/com/optum/jenkins/pipeline/library/dotnet/ @bgilzean @rsites
+
+# Security GPL Changes 
+/src/com/optum/jenkins/pipeline/library/security/ @rramasay
+/src/com/optum/jenkins/pipeline/library/sca/ @rramasay
+
+# DEVOPS METRICS
+# Assign DevOps Events changes to these owners for review
+/src/com/optum/jenkins/pipeline/library/event/ @mmaday 
+
+#JENKINS FILE
+# Assign Jenkinsfile changes to these owners for review
+Jenkinsfile @mmaday
+

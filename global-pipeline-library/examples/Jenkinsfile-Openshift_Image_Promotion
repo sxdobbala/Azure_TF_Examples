@@ -1,0 +1,50 @@
+#!/usr/bin/env groovy
+
+
+@Library("com.optum.jenkins.pipeline.library@master") _
+
+
+pipeline {
+  agent {
+    label 'docker-maven-slave'
+  }
+  environment {
+    OPENSHIFT_CREDENTIALS_ID = 'devopseng_tech'
+  }
+
+  stages {
+    stage ('Promote Dev to Prod') {
+      steps {
+        //Execute n number of tag instructions sequentially, in this example execute:
+        //Step #1. prod -> rollback
+        //Step #2. dev -> prod
+        glOpenshiftTag tag: ['prod':'rollback', 'dev':'prod'], credentials: "$env.OPENSHIFT_CREDENTIALS_ID", ocpUrl: "https://ocp-ctc-core-nonprod.optum.com", project: 'projectname', serviceName: 'test'
+      }
+    }
+    stage ('Rollback') {
+      steps {
+        //Method also works with simple promotions
+        glOpenshiftTag tag: ['rollback':'prod'], credentials: "$env.OPENSHIFT_CREDENTIALS_ID", ocpUrl: "https://ocp-ctc-core-nonprod.optum.com", project: 'projectname', serviceName: 'test'
+      }
+    }
+
+  }
+  post {
+    always {
+      echo 'This will always run'
+    }
+    success {
+      echo 'This will run only if successful'
+    }
+    failure {
+      echo 'This will run only if failed'
+    }
+    unstable {
+      echo 'This will run only if the run was marked as unstable'
+    }
+    changed {
+      echo 'This will run only if the state of the Pipeline has changed'
+      echo 'For example, if the Pipeline was previously failing but is now successful'
+    }
+  }
+}
