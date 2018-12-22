@@ -1,8 +1,0 @@
-apiVersion: v1
-metadata:
-  askId: poc
-  caAgileId: poc
-  projectKey: jpac
-  projectFriendlyName: global-pipeline-library
-  componentType: code 
-  targetQG: GATE_08

@@ -1,7 +1,0 @@
-apiVersion: v1
-metadata:
-  askId: poc
-  caAgileId: poc
-  projectKey: com.optum.oa.devopseng:Bodgeit
-  projectFriendlyName: DevOpsEng-Bodgeit
-  componentType: code
