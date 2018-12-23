@@ -1,0 +1,24 @@
+# pack-refs with: peeled fully-peeled 
+b712761ff4314a037e88b52b67c22da6e7864106 refs/remotes/origin/DE170008-IGWconfig
+4efd2660ff932da071c4dc95dc5dbd7df82710c9 refs/remotes/origin/ec2Introspect
+46f0a77ae8e3a6826322bc96e7b5969194b79f64 refs/remotes/origin/master
+36b596fbf85b6c2c43b5bf5d4c277dbe594e4ccd refs/remotes/origin/s3-to-glacier
+cddbe9fc074f67949baed644d6fdcaccbc088af4 refs/tags/test-tag
+e637620e24ddf72b362bbb624b3aa0a74a63f744 refs/tags/v1.0.0
+^d949c9d24bf5a3dc21b487c1dd719338c5660b27
+1a6d534702e13c11baaedfe9fd5153d1319e3cee refs/tags/v1.1.0
+^6e2e9c87129d262f6cba2c066dd07771154c2511
+b7e820ea3b109c6c82b5e3134b9669145ff45787 refs/tags/v1.2.0
+^b0eb719e1c936af4f3a11d36b9c6d0c7fde8f0a4
+8f318ca6eefb061eb3ad66b43fee57194252779b refs/tags/v1.3.0
+6f1ae291e5d46b43ee9a401026705a088cbfa76e refs/tags/v1.3.1
+9d229c41a94d8e1b482f69ef359635f2d9cb4f49 refs/tags/v1.4.0
+03aa9faa571a755147f2e8222a1bbe453a539d8f refs/tags/v1.4.1
+^daeb27a8c839016b245b5908ced8817f399cd2f5
+06f1f518199c61e78ff30cf27ddfbdd6c772aa9a refs/tags/v1.5.0
+ef8a13d9752daaef3274ad400ca42c25386d24aa refs/tags/v1.5.1
+cc4f63df00324e349a0f2f0c0845e3f3491900d7 refs/tags/v1.5.2
+33e94770097e1d1c3e5915bcdb7e434e666a98e3 refs/tags/v1.5.3
+b607fbe57bd2acd1abcda5c88a5d5435ebec5255 refs/tags/v1.5.4
+4232168dfb00fa034682eae5ec0bcbdb807bf8b1 refs/tags/v1.5.5
+46f0a77ae8e3a6826322bc96e7b5969194b79f64 refs/tags/v1.5.6

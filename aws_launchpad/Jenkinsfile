@@ -1,0 +1,114 @@
+#!/usr/bin/env groovy
+import hudson.model.*
+import groovy.json.JsonSlurperClassic
+import com.optum.commercialcloud.pipeline.launchpad.BaseAdapter
+import java.util.regex.*
+
+@Library(['com.optum.jenkins.pipeline.library@wip/terraform-enhancements','commercial-cloud']) _
+
+/**
+    Jenkins Build Properties
+    master_account_name : Used for Single Account Runs. 
+        The AWS Master ID/Name for the set of accounts, ex. PR, POC, and Enterprise.
+        If an empty string, will imply a regular Launchpad run for all accounts.
+    account_id : Used for Single Account Runs. 
+        The only AWS Account ID that will be applied with Launchpad in the build. 
+        If an empty string, will imply a regular Launchpad run for all accounts.
+    delete_default_vpcs : Used for Single and New Account Runs.
+        Boolean to indicate if the AWS Account needs to delete its Default VPCs. 
+        This should only be true for New AWS Accounts, to prevent breaking any 
+        existing Application in the account.
+*/
+properties([[$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false], 
+    parameters([
+        string(defaultValue: "", description: '', name: 'master_account_name', trim: false), 
+        string(defaultValue: "", description: '', name: 'account_id', trim: false),
+        booleanParam(defaultValue: false, description: '', name: 'delete_default_vpcs')
+        ]
+    )])
+
+/**
+    Helper function to verify the version in the next_version.txt is in the correct format
+    Correct format: vX.Y.Z[alpha|beta]
+    version: The version string to verify 
+*/
+def verify_version(version) {
+    return version ==~ /v\d+\.\d+\.\d+(alpha|beta)?/
+}
+
+// Determine which yaml file to retrieve.
+def awsLaunchPadFile = 'launchpad.pr.yml' // Default to YAML used for Pull Requests
+if (env.BRANCH_NAME == "master") {
+    awsLaunchPadFile = 'AWSRefreshAccountList.yml'
+}
+
+// Extrapolate the yaml file as text
+def yamlText
+node() {
+    withCredentials([
+        usernamePassword(credentialsId: 'CC_Automation', usernameVariable: 'AWS_CLI_username', passwordVariable: 'AWS_CLI_password')
+    ]){
+        // Clone yaml repo and read the yaml into a text object
+        sh """#!/bin/sh
+        git clone https://\$AWS_CLI_username:\$AWS_CLI_password@github.optum.com/CommercialCloud-EAC/aws_launchpad_refresh.git
+        """
+        yamlText = readFile file: "aws_launchpad_refresh/$awsLaunchPadFile" // Load in file as a literal String object
+
+        // Delete cloned yaml repo
+        sh """#!/bin/sh
+        rm -rf aws_launchpad_refresh
+        """
+    }
+}
+
+// Call BaseLaunchpadPipeline
+
+def adapter = null // AWSAdapter to pass in the BaseLaunchpadPipeline
+def masterAccount = null // Master Account ID for Single Account Runs in the BaseLaunchpadPipeline, null for running on All Accounts
+def accountId = null // AWS Account ID for Single Account Runs in the BaseLaunchpadPipeline, null for running on All Accounts
+def deleteDefaultVPCs = false // Indicate if the Default VPC gets deleted, only true for New Accounts
+def loader = null // Object that evaluates a Groovy file into the main Pipeline
+def version = null // String representation of the version inside the next_version.txt
+
+// Check if a Single Account run and load in the AWSAdapter.groovy file
+node() {
+    checkout scm 
+
+    // Verfication to check if the next_version.txt is in the right format
+    // vX.Y.Z[alpha|beta]
+    version = sh (script: "cat next_version.txt", returnStdout: true)
+    if(!verify_version(version)) {
+        echo "next_version.txt ($version) is not correctly formatted in vX.Y.Z[alpla|beta] format. Exiting"
+        currentBuild.result = 'FAILURE'
+        return 
+    }
+
+    // If Single Account Run, provide parameters for the Master Account Name 
+    // and individual Account ID, along with the latest tag/release AWSAdapter
+    if(params.master_account_name != "" && params.account_id != "") {
+        echo "Single Account Run on: ${params.master_account_name} - ${params.account_id}"
+        masterAccount = params.master_account_name
+        accountId = params.account_id
+        deleteDefaultVPCs = params.delete_default_vpcs
+
+        // Checkout to the latest tag/release, ignore if in PR
+        if(env.BRANCH_NAME == "master") {
+            sh (script: "git pull") // Need to pull to get tags, they are not loaded in by default
+            def latestRelease = sh (script: "git describe --tags --abbrev=0", returnStdout: true)
+            echo "Applying Launchpad Release: ${latestRelease}"
+            sh (script: "git checkout ${latestRelease}")
+        }
+    }
+    loader = load 'AWSAdapter.groovy' // Load in the AWSAdapter Class with helper function
+}
+
+// Load in the adapter and call BaseLaunchpadPipeline
+try {
+    adapter = loader.getAWSAdapter(this) // Helper function that will instantiate an AWSAdapter instance
+}
+catch (Exception e) {
+    echo "${e}:  Unable to load the AWSAdapter from the AWSAdapter.groovy. Please verify AWSAdapter.groovy exists and in correct format."
+    currentBuild.result = 'FAILURE'
+    return
+}
+BaseLaunchpadPipeline(adapter, yamlText, 'docker-ruby-slave', masterAccount, accountId, deleteDefaultVPCs)

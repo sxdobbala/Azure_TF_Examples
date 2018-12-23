@@ -1,0 +1,4 @@
+*.orig
+ignoreme*
+.terraform/
+.vscode
