@@ -1,1 +1,0 @@
-../common/bucket_encryption_policy.tf

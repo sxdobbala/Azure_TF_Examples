@@ -1,9 +1,0 @@
-#!/usr/bin/env groovy
-@Library('commercial-cloud') _ 
-/* 
-    Passing boolean 'true' in the call below will run all the tests in the 
-    module during PRs and lock each PR build.  Default is false.
-    See https://github.optum.com/CommercialCloud-EAC/jenkins-pipeline/blob/aws-mod-lock/vars/AWSModulePipeline.groovy
-    for more details.
-*/
-AWSModulePipeline()

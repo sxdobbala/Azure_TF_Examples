@@ -1,9 +1,0 @@
-.terraform
-terraform.tfstate*
-**/.DS_Store
-spec/fixtures
-examples/bootstrap_azure/*state.tf
-.tf-prepare/
-*.orig
-*.bak
-*.tfstate

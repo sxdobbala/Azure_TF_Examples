@@ -1,1 +1,0 @@
-../common/log_variables.tf

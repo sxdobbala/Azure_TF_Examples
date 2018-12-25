@@ -1,9 +1,0 @@
-.pytest_cache*
-pytest_cache*
-.terraform
-terraform.tfstate*
-**/.DS_Store
-spec/fixtures
-.swp
-inspec/files
-inspec/inspec.lock

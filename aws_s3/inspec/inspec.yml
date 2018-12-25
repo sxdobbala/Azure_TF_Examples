@@ -1,5 +1,0 @@
-name: terraform_aws_s3
-title: Terraform AWS S3
-maintainer: Optum Inner Source
-summary: An InSpec Compliance Profile
-version: 0.1.0
