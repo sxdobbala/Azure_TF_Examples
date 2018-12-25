@@ -1,9 +1,0 @@
-terraform {
-  backend "s3" {
-  bucket         = "${bootstrap_tfstate_s3_bucket_name}"
-  key            = "base_vpc/terraform.tfstate"
-  dynamodb_table = "${bootstrap_tflock_dynamodb_table}"
-  encrypt        = "true"
-  region         = "us-east-1"
-  }
-}

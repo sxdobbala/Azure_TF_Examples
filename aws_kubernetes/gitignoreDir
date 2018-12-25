@@ -1,7 +1,0 @@
-.terraform
-terraform.tfstate*
-**/.DS_Store
-spec/fixtures
-code_deploy.zip
-squid_proxy.txt
-

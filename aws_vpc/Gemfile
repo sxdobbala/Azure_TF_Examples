@@ -1,7 +1,0 @@
-source 'https://rubygems.org'
-gem 'rspec'
-gem 'rspec-command'
-gem 'rspec-core'
-gem "commercial_cloud", :git => "https://github.optum.com/CommercialCloud-EAC/terraform_common.git", :ref => "v1.2.1"
-gem 'inspec', '~> 2.1.59'
-gem 'rspec_junit_formatter', '~> 0.3.0'

@@ -1,9 +1,0 @@
-terraform {
-  backend "s3" {
-    bucket         = BUCKET_PLACE_HOLDER
-    key            = "packer/terraform.tfstate"
-    dynamodb_table = DYNAMODB_PLACE_HOLDER
-    encrypt        = "true"
-    region         = "us-east-1"
-  }
-}
