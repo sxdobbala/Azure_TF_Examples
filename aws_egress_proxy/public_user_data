@@ -1,0 +1,114 @@
+#!/bin/bash
+
+squidport=${squid_port}
+stackname=${egress_proxy_name}
+loggroup=${cloudwatch_logs_group}
+log_region=${cloudwatch_region}
+
+if [ -z $squidport ] || [ -z $stackname ] || [ -z $loggroup ] || [ -z $log_region ]; then
+	echo "Missing arguments"
+	exit 1
+fi
+
+function super_curl(){
+	local url=$1
+	local file="$${url##*/}"
+	if ! curl -f --ipv4 -Lo "/tmp/$file" --connect-timeout 20 --retry 5 --retry-delay 10 "$url"; then
+        echo "== Failed to download $url. Retrying. =="
+  else
+          echo "== Downloaded $file =="
+  fi
+}
+
+cd /home/ec2-user
+yum update -y
+
+# Install Squid from Amazon Linux repository
+# Rewrite the squid.conf file to update port and set disk cache to 5000 MB
+squidport2=$((squidport+1))
+yum install -y squid
+cat /etc/squid/squid.conf.default | \
+sed "s/^http_port .*/http_port $squidport require-proxy-header\nhttp_port $squidport2\nproxy_protocol_access allow localnet/" | \
+sed "s/^#cache_dir \([a-z \/]*\)\([0-9]*\)/cache_dir \15000/" > /etc/squid/squid.conf
+echo "logfile_rotate 10" >> /etc/squid/squid.conf
+echo "debug_options rotate=10" >> /etc/squid/squid.conf
+
+sed -i -e '1i# We recommend that you deny HTTP requests to 169.254.169.254 to prevent\' /etc/squid/squid.conf
+sed -i -e '2i# a client from obtaining the metadata of Squid instances, including the\' /etc/squid/squid.conf
+sed -i -e '3i# temporary STS credentials of the Squid instances.\' /etc/squid/squid.conf
+sed -i -e '4iacl metadata dst 169.254.169.254\' /etc/squid/squid.conf
+sed -i -e '5ihttp_access deny metadata\' /etc/squid/squid.conf
+sed -i -e '6i#module default rule to allow only *.amazonaws.com and *.newrelic.com\' /etc/squid/squid.conf
+sed -i -e '7iacl awsendpoint dstdomain .amazonaws.com\' /etc/squid/squid.conf
+sed -i -e '8iacl nr dstdomain .newrelic.com\' /etc/squid/squid.conf
+# removes all outbound from local network 
+sed -i '/http_access allow localnet/d' /etc/squid/squid.conf
+sed -i '/# And finally deny all other access to this proxy/d' /etc/squid/squid.conf
+sed -i '/http_access deny all/d' /etc/squid/squid.conf
+# module default rule to allow only *.amazonaws.com and *.newrelic.com"
+echo "# module default rule to allow only *.amazonaws.com and *.newrelic.com" >> /etc/squid/squid.conf
+echo "http_access allow localnet awsendpoint" >> /etc/squid/squid.conf
+echo "http_access allow localnet nr" >> /etc/squid/squid.conf
+echo "# And finally deny all other access to this proxy " >> /etc/squid/squid.conf
+echo "http_access deny all" >> /etc/squid/squid.conf
+
+# Create cache directories
+squid -z
+
+# Start Squid proxy 
+systemctl enable squid.service
+systemctl restart squid.service
+
+# Install and configure CloudWatch Logs agent
+yum install -y awslogs
+cp /etc/awslogs/awscli.conf /etc/awslogs/awscli.conf.default
+cp /etc/awslogs/awslogs.conf /etc/awslogs/awslogs.conf.default
+cat /etc/awslogs/awscli.conf.default | sed "s/^region = .*/region = $log_region/" > /etc/awslogs/awscli.conf
+cat > /etc/awslogs/awslogs.conf << EOF
+[general]
+state_file = /var/lib/awslogs/agent-state
+[access.log]
+log_group_name = $loggroup
+log_stream_name = access-{instance_id}
+file = /var/log/squid/access.log*
+[cache.log]
+log_group_name = $loggroup
+log_stream_name = cache-{instance_id}
+file = /var/log/squid/cache.log*
+EOF
+systemctl enable awslogsd.service
+systemctl restart awslogsd.service
+
+
+# Send Squid application metrics to CloudWatch every 5 min
+cat > /home/ec2-user/squid-metrics.sh << EOF
+totalrequests=\`squidclient -p $squidport2 mgr:5min | grep "client_http.requests" | cut -d " " -f3 | cut -d "/" -f1\`
+hitrequests=\`squidclient -p $squidport2 mgr:5min | grep "client_http.hits" | cut -d " " -f3 | cut -d "/" -f1\`
+totalkbytes=\`squidclient -p $squidport2 mgr:5min | grep "client_http.kbytes_out" | cut -d " " -f3 | cut -d "/" -f1\`
+cachesize=\`du -s /var/spool/squid | sed 's/^\([0-9]*\).*/\1/'\`
+aws cloudwatch put-metric-data --region "$log_region" --namespace "EgressProxy" --metric-name "TotalRequestsPerSecond" --unit "Count/Second" --dimensions "StackName=$stackname" --value "\$totalrequests" --timestamp "\`date -u "+%Y-%m-%dT%H:%M:%SZ"\`" 
+aws cloudwatch put-metric-data --region "$log_region" --namespace "EgressProxy" --metric-name "HitRequestsPerSecond" --unit "Count/Second" --dimensions "StackName=$stackname" --value "\$hitrequests" --timestamp "\`date -u "+%Y-%m-%dT%H:%M:%SZ"\`" 
+aws cloudwatch put-metric-data --region "$log_region" --namespace "EgressProxy" --metric-name "TotalKbytesPerSecond" --unit "Kilobytes/Second" --dimensions "StackName=$stackname" --value "\$totalkbytes" --timestamp "\`date -u "+%Y-%m-%dT%H:%M:%SZ"\`" 
+aws cloudwatch put-metric-data --region "$log_region" --namespace "EgressProxy" --metric-name "DiskCacheSize" --unit "Kilobytes" --dimensions "StackName=$stackname" --value "\$cachesize" --timestamp "\`date -u "+%Y-%m-%dT%H:%M:%SZ"\`" 
+EOF
+
+chmod +x /home/ec2-user/squid-metrics.sh
+crontab -l > mycron
+cat > mycron << EOF
+0 0 * * * squid -k rotate
+*/5 * * * * bash /home/ec2-user/squid-metrics.sh
+0 0 * * * yum -y update --security
+EOF
+crontab mycron
+rm mycron
+
+# Install CloudDeploy agent
+yum install -y ruby
+yum install -y aws-cli
+aws s3 cp s3://aws-codedeploy-$log_region/latest/install . --region $log_region
+chmod +x ./install
+./install auto
+
+#install inspector
+super_curl "https://d1wk0tztpsntt1.cloudfront.net/linux/latest/install"
+sudo bash /tmp/install

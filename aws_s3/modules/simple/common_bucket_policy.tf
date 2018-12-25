@@ -1,0 +1,1 @@
+../common/bucket_policy.tf

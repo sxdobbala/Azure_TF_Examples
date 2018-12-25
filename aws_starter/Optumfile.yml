@@ -1,0 +1,17 @@
+pipeline:
+  terraform:
+    aws:
+      accounts:
+        nonprod:
+          jenkins: 
+              credentials:
+                usernamePassword: Service_Keystone_NonProd_OptumPOC # Stored Username and Password in the Jenkins Credentials
+          account: "006694512080" # AWS Account ID
+          roleArn: arn:aws:iam::006694512080:role/AWS_006694512080_Service # Role to assume
+          sandbox: true
+      environments:
+        dev:
+          account: nonprod
+          bootstrapVars: # (Optional) variables used for aws_bootstrap, else uses default
+            nameSpace: test
+            region: us-east-2

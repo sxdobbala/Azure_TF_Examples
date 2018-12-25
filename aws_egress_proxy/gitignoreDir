@@ -1,0 +1,9 @@
+**/terraform.tfstate
+**/terraform.tfstate.backup
+terraform_module/.terraform/*
+terraform_module/.terraform.*
+terraform_module/squid_proxy.txt
+spec/fix*
+code_deploy_config/*.zip
+.terraform
+backup/*
