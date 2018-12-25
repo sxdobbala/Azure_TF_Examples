@@ -1,0 +1,17 @@
+apiVersion: kops/v1alpha2
+kind: InstanceGroup
+metadata:
+  creationTimestamp: 2017-12-17T15:21:38Z 
+  labels:
+    kops.k8s.io/cluster: CLUSTER_NAME_PLACE_HOLDER
+  name: nodes
+spec:
+  image: IMAGE_PLACE_HOLDER 
+  machineType: NODE_INSTANCE_TYPE_PLACE_HOLDER 
+  maxSize: MAX_NODE_COUNT_PLACE_HOLDER
+  minSize: MIN_NODE_COUNT_PLACE_HOLDER
+  nodeLabels:
+    kops.k8s.io/instancegroup: nodes
+  role: Node
+  subnets:
+    ALL_ZONE_PLACE_HOLDER

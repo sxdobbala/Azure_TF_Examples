@@ -1,0 +1,55 @@
+apiVersion: kops/v1alpha2
+kind: Cluster
+metadata:
+  creationTimestamp: 2017-12-17T15:21:37Z 
+  name: CLUSTER_NAME_PLACE_HOLDER 
+spec:
+  api:
+    loadBalancer:
+      type: Public 
+  egressProxy:
+    httpProxy:
+      host: EGRESS_PROXY_HOST_PLACE_HOLDER 
+      port: EGRESS_PROXY_PORT_PLACE_HOLDER 
+    excludes: 169.254.169.254,localhost,127.0.0.1,api.CLUSTER_NAME_PLACE_HOLDER,CLUSTER_NAME_PLACE_HOLDER,100.64.0.1,100.64.0.0/10,.svc,VPC_CIDR_PLACE_HOLDER
+  authorization:
+    rbac: {}
+  channel: stable
+  cloudProvider: aws
+  configBase: s3://S3_STORE_BUCKET_NAME_PLACE_HOLDER/CLUSTER_NAME_PLACE_HOLDER/
+  etcdClusters: [{"etcdMembers":INSTANCE_GROUP_PLACE_HOLDER,"name":"main"}, {"etcdMembers":INSTANCE_GROUP_PLACE_HOLDER,"name":"events"}]
+  iam:
+    allowContainerRegistry: true
+    legacy: false
+  kubeAPIServer:
+    authorizationMode: RBAC
+    auditLogPath: /var/log/kube-apiserver-audit.log
+    auditLogMaxAge: 10
+    auditLogMaxBackups: 1
+    auditLogMaxSize: 100
+    auditPolicyFile: /srv/kubernetes/audit.conf
+  kubernetesApiAccess:
+  - 0.0.0.0/0
+  kubernetesVersion: 1.10.11
+  masterInternalName: api.internal.CLUSTER_NAME_PLACE_HOLDER
+  masterPublicName: api.CLUSTER_NAME_PLACE_HOLDER
+  networkCIDR: VPC_CIDR_PLACE_HOLDER
+  networkID: VPC_ID_PLACE_HOLDER 
+  networking:
+    calico: {}
+  nonMasqueradeCIDR: 100.64.0.0/10
+  subnets: [ SUBNET_LIST_PLACE_HOLDER ]
+  topology:
+    dns:
+      type: Public
+    masters: private
+    nodes: private
+  fileAssets:
+  - name: audit.conf
+    path: /srv/kubernetes/audit.conf
+    roles: [Master,Node]
+    content: |
+      apiVersion: audit.k8s.io/v1beta1
+      kind: Policy
+      rules:
+      - level: Metadata

@@ -1,0 +1,14 @@
+[ req ]
+req_extensions = v3_ca
+distinguished_name = req_distinguished_name
+x509_extensions	= usr_cert
+[ req_distinguished_name ]
+commonName = kubecfg
+organizationName = system:masters
+[ v3_ca ]
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+extendedKeyUsage = clientAuth
+[ usr_cert ]
+nsCertType = client
+extendedKeyUsage = clientAuth

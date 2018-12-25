@@ -1,0 +1,313 @@
+#!/bin/bash
+
+function super_curl(){
+	local url=$1
+	local file="${url##*/}"
+	if ! curl -f --ipv4 -Lo "/tmp/${file}" --connect-timeout 20 --retry 5 --retry-delay 10 "${url}"; then
+        echo "== Failed to download ${url}. Retrying. =="
+  else
+          echo "== Downloaded ${file} =="
+  fi
+}
+
+function install_debian_updates(){
+ sudo apt-get update \
+ && export DEBIAN_FRONTEND=noninteractive \
+ && sudo apt-get upgrade -y \
+ && sudo apt-get -y install build-essential
+}
+
+function install_ubuntu_updates(){
+ sudo ucf --purge /boot/grub/menu.lst \
+ && sudo apt-get update \
+ && sudo UCF_FORCE_CONFFNEW=YES apt-get upgrade -yq \
+ && sudo apt-get upgrade linux-aws --yes \
+ && sudo apt-get install --yes build-essential
+}
+
+function install_aws_linux2_updates(){
+ sudo yum update -y
+ sudo yum install -y gcc
+ echo "Amazon Linux AMI"|sudo tee /etc/issue
+}
+
+# Clean up yum caches to reduce the image size
+function cleanup_install_linux2_updates(){
+  sudo yum clean all
+  sudo rm -rf /var/cache/yum
+}
+
+function install_ssm(){
+ super_curl "https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/debian_amd64/amazon-ssm-agent.deb"
+ sudo dpkg -i /tmp/amazon-ssm-agent.deb
+ sudo systemctl enable amazon-ssm-agent
+}
+
+function install_aws_linux2_ssm(){
+ sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+}
+
+# Latest as of Sep 2018 
+function install_ossec(){
+ossec_checksum="0bb46575702f1e41959ada756b51ab45704f8417"
+super_curl "https://github.com/ossec/ossec-hids/archive/3.0.0.tar.gz"
+mv /tmp/3.0.0.tar.gz /tmp/ossec-hids-3.0.0.tar.gz
+checksum=$(sha1sum /tmp/ossec-hids-3.0.0.tar.gz | cut -d" " -f1)
+if [ $checksum == $ossec_checksum ]; then
+  tar xfz /tmp/ossec-hids-3.0.0.tar.gz
+  cat > /tmp/ossec-hids-3.0.0/etc/preloaded-vars.conf <<EOF
+USER_LANGUAGE="en";
+USER_NO_STOP="y";
+USER_INSTALL_TYPE="local";
+USER_DIR="/var/ossec";
+USER_ENABLE_SYSCHECK="y";
+USER_ENABLE_ROOTCHECK="y";
+USER_UPDATE_RULES="y";
+USER_ENABLE_EMAIL="n";
+USER_ENABLE_FIREWALL_RESPONSE="n";
+USER_ENABLE_ACTIVE_RESPONSE="n";
+EOF
+  sudo bash /tmp/ossec-hids-3.0.0/install.sh
+  sudo sed -i '/<global>/a \\    \<jsonout_output>yes<\/jsonout_output>' /var/ossec/etc/ossec.conf
+ else
+   echo "Wrong checksum. Download again or check if file has been tampered with."
+ fi
+ sudo bash /var/ossec/bin/ossec-control start
+}
+
+# enable systemd for OSSEC - needed for amazon linux2
+function enable_ossec_systemd(){
+  cat > /tmp/ossec.service <<EOF
+[Unit]
+Description=OSSEC service
+
+[Service]
+Type=forking
+ExecStart=/var/ossec/bin/ossec-control start
+ExecStop=/var/ossec/bin/ossec-control stop
+
+[Install]
+WantedBy=multi-user.target
+EOF
+sudo mv /tmp/ossec.service /etc/systemd/system/ossec.service
+sudo systemctl daemon-reload && sudo systemctl enable ossec
+}
+
+
+function install_amazon_linux2_squid_proxy_awslog_agent(){
+super_curl "https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py"
+cat > /tmp/aws-config <<EOF
+[general]
+state_file = /var/awslogs/state/agent-state
+
+[squid-access.log]
+log_group_name = egress-proxy-logs
+log_stream_name = access-{instance_id}
+file = /var/log/squid/access.log*
+[squid-cache.log]
+log_group_name = egress-proxy-logs
+log_stream_name = cache-{instance_id}
+file = /var/log/squid/cache.log*
+[/var/ossec/logs/alerts]
+file = /var/ossec/logs/alerts/alerts.json
+log_stream_name = {instance_id}
+log_group_name = ossec_alerts
+datetime_format = %b %d %H:%M:%S
+initial_position = start_of_file
+EOF
+sudo python /tmp/awslogs-agent-setup.py -n -r us-east-1 -c aws-config
+sudo systemctl enable awslogs.service
+}
+
+
+function install_awslog_agent(){
+super_curl "https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py"
+cat > /tmp/aws-config <<EOF
+[general]
+state_file = /var/awslogs/state/agent-state
+
+[/var/ossec/logs/alerts]
+file = /var/ossec/logs/alerts/alerts.json
+log_stream_name = {instance_id}
+log_group_name = ossec_alerts
+datetime_format = %b %d %H:%M:%S
+initial_position = start_of_file
+EOF
+sudo python /tmp/awslogs-agent-setup.py -n -r us-east-1 -c aws-config
+sudo rm -rf /var/awslogs/etc/proxy.conf 
+sudo ln -s /etc/environment /var/awslogs/etc/proxy.conf
+sudo systemctl enable awslogs.service
+}
+
+function install_ubuntu_awslog_agent(){
+super_curl "https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py"
+cat > /tmp/aws-config <<EOF
+[general]
+state_file = /var/awslogs/state/agent-state
+
+[/var/ossec/logs/alerts]
+file = /var/ossec/logs/alerts/alerts.json
+log_stream_name = {instance_id}
+log_group_name = ossec_alerts
+datetime_format = %b %d %H:%M:%S
+initial_position = start_of_file
+EOF
+sudo python3 /tmp/awslogs-agent-setup.py -n -r us-east-1 -c aws-config
+sudo rm -rf /var/awslogs/etc/proxy.conf 
+sudo ln -s /etc/environment /var/awslogs/etc/proxy.conf
+}
+
+function install_aws_inspector_agent(){
+super_curl "https://d1wk0tztpsntt1.cloudfront.net/linux/latest/install"
+sudo bash /tmp/install
+}
+
+function install_squid_proxy(){
+ sudo yum install -y squid
+# Rewrite the squid.conf file to update port and set disk cache to 5000 MB
+ cat /etc/squid/squid.conf.default |\
+ sed "s/^http_port .*/http_port 3128 require-proxy-header\nhttp_port 3129\nproxy_protocol_access allow localnet/" | \
+ sed "s/^#cache_dir \([a-z \/]*\)\([0-9]*\)/cache_dir \15000/" |sudo tee /etc/squid/squid.conf
+ echo "logfile_rotate 10" |sudo tee -a /etc/squid/squid.conf
+ echo "debug_options rotate=10" |sudo tee -a /etc/squid/squid.conf
+ sudo sed -i -e '1i# We recommend that you deny HTTP requests to 169.254.169.254 to prevent\' /etc/squid/squid.conf
+ sudo sed -i -e '2i# a client from obtaining the metadata of Squid instances, including the\' /etc/squid/squid.conf
+ sudo sed -i -e '3i# temporary STS credentials of the Squid instances.\' /etc/squid/squid.conf
+ sudo sed -i -e '4iacl metadata dst 169.254.169.254\' /etc/squid/squid.conf
+ sudo sed -i -e '5ihttp_access deny metadata\' /etc/squid/squid.conf
+ sudo sed -i -e '6i#module default rule to allow only *.amazonaws.com and *.newrelic.com\' /etc/squid/squid.conf
+ sudo sed -i -e '7iacl awsendpoint dstdomain .amazonaws.com\' /etc/squid/squid.conf
+ sudo sed -i -e '8iacl nr dstdomain .newrelic.com\' /etc/squid/squid.conf
+ # removes all outbound from local network 
+ sudo sed -i '/http_access allow localnet/d' /etc/squid/squid.conf
+ sudo sed -i '/# And finally deny all other access to this proxy/d' /etc/squid/squid.conf
+ sudo sed -i '/http_access deny all/d' /etc/squid/squid.conf
+ # module default rule to allow only *.amazonaws.com and *.newrelic.com"
+ echo "# module default rule to allow only *.amazonaws.com and *.newrelic.com" |sudo tee -a /etc/squid/squid.conf
+ echo "http_access allow localnet awsendpoint" |sudo tee -a /etc/squid/squid.conf
+ echo "http_access allow localnet nr" |sudo tee -a /etc/squid/squid.conf
+ echo "# And finally deny all other access to this proxy " |sudo tee -a /etc/squid/squid.conf
+ echo "http_access deny all" |sudo tee -a /etc/squid/squid.conf
+
+# Create cache directories
+ squid -z
+
+# enable squid proxy on start
+sudo systemctl enable squid.service
+}
+
+function install_squid_proxy_metrics(){
+sudo bash -c 'cat > /home/ec2-user/squid-metrics.sh << EOF
+totalrequests=\`squidclient -p 3129 mgr:5min | grep "client_http.requests" | cut -d " " -f3 | cut -d "/" -f1\`
+hitrequests=\`squidclient -p 3129 mgr:5min | grep "client_http.hits" | cut -d " " -f3 | cut -d "/" -f1\`
+totalkbytes=\`squidclient -p 3129 mgr:5min | grep "client_http.kbytes_out" | cut -d " " -f3 | cut -d "/" -f1\`
+cachesize=\`du -s /var/spool/squid | sed 's/^\([0-9]*\).*/\1/'\`
+aws cloudwatch put-metric-data --region "LOG_REGION" --namespace "EgressProxy" --metric-name "TotalRequestsPerSecond" --unit "Count/Second" --dimensions "StackName=STACK_NAME" --value "\$totalrequests" --timestamp "\`date -u "+%Y-%m-%dT%H:%M:%SZ"\`" 
+aws cloudwatch put-metric-data --region "LOG_REGION" --namespace "EgressProxy" --metric-name "HitRequestsPerSecond" --unit "Count/Second" --dimensions "StackName=STACK_NAME" --value "\$hitrequests" --timestamp "\`date -u "+%Y-%m-%dT%H:%M:%SZ"\`" 
+aws cloudwatch put-metric-data --region "LOG_REGION" --namespace "EgressProxy" --metric-name "TotalKbytesPerSecond" --unit "Kilobytes/Second" --dimensions "StackName=STACK_NAME" --value "\$totalkbytes" --timestamp "\`date -u "+%Y-%m-%dT%H:%M:%SZ"\`" 
+aws cloudwatch put-metric-data --region "LOG_REGION" --namespace "EgressProxy" --metric-name "DiskCacheSize" --unit "Kilobytes" --dimensions "StackName=STACK_NAME" --value "\$cachesize" --timestamp "\`date -u "+%Y-%m-%dT%H:%M:%SZ"\`" 
+EOF'
+sudo chmod +x /home/ec2-user/squid-metrics.sh
+# Manage cron
+sudo bash -c 'crontab -l > mycron'
+sudo bash -c 'cat > mycron << EOF
+0 0 * * * squid -k rotate
+*/5 * * * * bash /home/ec2-user/squid-metrics.sh
+0 0 * * * yum -y update --security
+EOF'
+sudo crontab mycron
+sudo rm mycron
+}
+
+function install_codedeploy_agent(){
+ sudo yum install -y ruby
+ super_curl https://aws-codedeploy-us-east-1.s3.amazonaws.com/latest/install
+ sudo chmod +x /tmp/install
+ sudo /tmp/install auto
+ sudo systemctl enable codedeploy-agent.service
+}
+
+# AWS Security Best Practices-1.0
+function disable_ubuntu_root_login(){
+ sudo sed -i "s/PermitRootLogin prohibit-password/PermitRootLogin no/g" /etc/ssh/sshd_config
+ echo "root login disabled for ubuntu"
+}
+
+# AWS Security Best Practices-1.0
+function disable_debian_root_login(){
+ sudo sed -i "s/PermitRootLogin without-password/PermitRootLogin no/g" /etc/ssh/sshd_config
+ echo "root login disabled for debian"
+}
+
+
+ # AWS Security Best Practices-1.0
+function disable_amazon_linux2_root_login(){
+ sudo sed -i "s/#PermitRootLogin yes/PermitRootLogin no/g" /etc/ssh/sshd_config
+ echo "root login disabled for amazon linux"
+ }
+
+echo $OS_TYPE
+echo $AMI_BUILD_TYPE
+
+if [ $AMI_BUILD_TYPE == "add_agents" ]; then
+ if [ $OS_TYPE == "debian" ]; then
+  install_debian_updates
+  install_ssm
+  install_ossec
+  install_awslog_agent
+  disable_debian_root_login
+ elif [ $OS_TYPE == "ubuntu" ]; then
+  install_ubuntu_updates
+  install_ssm
+  install_ossec
+  install_ubuntu_awslog_agent
+  install_aws_inspector_agent
+  disable_ubuntu_root_login
+ elif [ $OS_TYPE == "amazon-linux2-eks" ]; then
+  install_aws_linux2_updates
+  install_aws_linux2_ssm
+  install_ossec
+  enable_ossec_systemd
+  install_awslog_agent
+  install_aws_inspector_agent
+  disable_amazon_linux2_root_login
+  cleanup_install_linux2_updates
+ elif [ $OS_TYPE == "amazon-linux2-egress-proxy" ]; then
+  install_aws_linux2_updates
+  install_aws_linux2_ssm
+  install_ossec
+  enable_ossec_systemd
+  install_amazon_linux2_squid_proxy_awslog_agent
+  install_aws_inspector_agent
+  install_squid_proxy
+  install_squid_proxy_metrics
+  install_codedeploy_agent
+  disable_amazon_linux2_root_login
+  cleanup_install_linux2_updates
+ else
+ echo "Unrecagnized OS type $OS_TYPE"
+ exit 1
+ fi
+elif [ $AMI_BUILD_TYPE == "upgrade_only" ]; then
+ if [ $OS_TYPE == "debian" ]; then
+  install_debian_updates
+  disable_debian_root_login
+ elif [ $OS_TYPE == "ubuntu" ]; then
+  install_ubuntu_updates
+  disable_ubuntu_root_login
+ elif [ $OS_TYPE == "amazon-linux2-eks" ]; then
+  install_aws_linux2_updates
+  disable_amazon_linux2_root_login
+  cleanup_install_linux2_updates
+ elif [ $OS_TYPE == "amazon-linux2-egress-proxy" ]; then
+  install_aws_linux2_updates
+  disable_amazon_linux2_root_login
+  cleanup_install_linux2_updates
+ else
+ echo "Unrecagnized OS type $OS_TYPE"
+  exit 1
+ fi
+else
+ echo "Unrecagnized build type $AMI_BUILD_TYPE"
+ exit 1
+fi

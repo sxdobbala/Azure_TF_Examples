@@ -1,0 +1,24 @@
+apiVersion: storage.k8s.io/v1beta1
+kind: StorageClass
+metadata:
+  name: provisioned-iops-ssd 
+  labels:
+    k8s-addon: storage-aws.addons.k8s.io
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: io1 
+  encrypted: "true"
+---
+
+apiVersion: storage.k8s.io/v1beta1
+kind: StorageClass
+metadata:
+  name: general-purpose-ssd 
+  annotations:
+    storageclass.beta.kubernetes.io/is-default-class: "true"
+  labels:
+    k8s-addon: storage-aws.addons.k8s.io
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: gp2
+  encrypted: "true"
