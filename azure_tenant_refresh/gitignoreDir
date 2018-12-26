@@ -1,9 +1,0 @@
-.terraform/
-.tf-prepare/
-.pytest_cache/
-__pycache__
-pytest.xml
-.vscode
-**/.DS_Store
-terraform.tfstate*
-venv

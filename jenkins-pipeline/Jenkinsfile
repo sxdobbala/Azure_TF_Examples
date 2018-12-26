@@ -1,7 +1,0 @@
-node{
-    checkout scm
-        library identifier: "commercial-cloud@${env.BRANCH_NAME}", retriever: legacySCM(scm)
-        PythonPipeline()
-        AWSModulePipeline()
-        AzureModulePipeline()
-}

@@ -1,6 +1,0 @@
-class CommonLaunchpad {
-
-  CommonLaunchpad(tenants) {
-    
-  }
-}
