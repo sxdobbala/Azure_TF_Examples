@@ -1,0 +1,43 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  data:
+    LOGFILE_NAME_CONNECTOR: connector.log
+    LOGLEVEL_BASE: INFO
+    LOGLEVEL_CONSOLE: ERROR
+    LOGLEVEL_FILE: INFO
+  kind: ConfigMap
+  metadata:
+    name: connector-configmap
+    namespace: ace-icp-stg
+- apiVersion: v1
+  data:
+    BIFROST_DATASOURCE_ADMIN_PASSWORD: '!EnT_1cP_iS_sTg_b0q'
+    BIFROST_DATASOURCE_PASSWORD: '!Ent_1cp_P_stg_n5x'
+    DATASOURCE_ADMIN_USERNAME: icp_is
+    DATASOURCE_APOLLO_PASSWORD: '-7da09bfaa672c3a0ee8220e214113558c08f3b8084b02638'
+    DATASOURCE_HOST: MGD-STG-SCAN.uhc.com
+    DATASOURCE_PORT: '1521'
+    DATASOURCE_PROTOCOL: 'jdbc:oracle:thin:'
+    DATASOURCE_SCHEMA: icp_p
+    DATASOURCE_SID: entace_stg_1
+    DATASOURCE_URL: 'jdbc:oracle:thin:@MGD-STG-SCAN.uhc.com:1521/entace_stg_1'
+    DATASOURCE_USERNAME: icp_p
+    JMS_HOST_MAIN: connector-service.ace-icp-stg.svc.cluster.local
+    JMS_PORT: '61616'
+    LOGFILE_NAME_BIFROST: bifrost.log
+    LOGFILE_NAME_JBOSS: jboss.server.log
+    LOGLEVEL_APACHE: INFO
+    LOGLEVEL_BASE: INFO
+    LOGLEVEL_CONSOLE: ERROR
+    LOGLEVEL_FILE: INFO
+    LOGLEVEL_ILOG: INFO
+    LOGLEVEL_INGENIX: DEBUG
+    LOGLEVEL_INGENIX_RULES: DEBUG
+    LOGLEVEL_JBOSS: INFO
+  kind: ConfigMap
+  metadata:
+    name: icp-configmap
+    namespace: ace-icp-stg
+kind: List
+metadata: {}
