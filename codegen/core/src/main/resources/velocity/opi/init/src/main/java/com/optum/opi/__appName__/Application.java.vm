@@ -1,0 +1,21 @@
+package com.optum.opi.${appName};
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+/**
+ * Entry point to the cloud scaffolding boiler plate - Spring Boot
+ * 
+ * @author AUTHOR, AUTHOR_EMAIL
+ * @version VERSION
+ */
+@SpringBootApplication
+public class Application {
+    /**
+     * Main method for cloud scaffolding boiler plate. Sends metadata to discovery
+     * service.
+     */
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}

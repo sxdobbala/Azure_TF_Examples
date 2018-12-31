@@ -1,0 +1,15 @@
+sh '''
+                        . /etc/profile.d/jenkins.sh
+                    '''
+
+                    sh '''
+                        BUILD_CONFIG=`curl -X GET $PAAS_SERVER/v2/apps/$PAAS_APP | grep $PAAS_APP | tail -1 | awk '{print $4}'`
+
+                        if [ "$BUILD_CONFIG" == "not" ]; then
+                            curl -X POST -H "Content-Type:application/json" --data @deploy_config.json $PAAS_SERVER/v2/apps/
+                            sleep 10
+                        else
+                            curl -X POST $PAAS_SERVER/v2/apps/$PAAS_APP/restart
+                        fi;
+                    '''
+

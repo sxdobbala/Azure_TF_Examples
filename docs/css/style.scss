@@ -1,0 +1,114 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+.navbar {
+  overflow: hidden;
+  background-color: gray;
+}
+
+.navbar {
+	overflow:hidden;
+	background-color:gray;
+	align-items: stretch;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.navbar a, .navbar a:visited {
+	float:left;
+	font-size:16px;
+	color:white;
+	text-align:center;
+	padding:12px 16px;
+	text-decoration:none
+}
+
+.nav-left {
+	align-items: left;
+	display: flex;
+	flex: 0 0 auto;
+}
+
+.nav-center {
+  align-items: center;
+	display:flex;
+	flex: 0 0 auto;
+}
+
+.nav-right {
+	align-items: right;
+	display: flex;
+	flex: 0 0 auto;
+}
+
+.menu {
+  float: left;
+  overflow: hidden;
+}
+
+.menu .menu-trigger {
+  font-size: 16px;
+  border: none;
+  outline: none;
+  color: white;
+  padding: 14px 16px;
+  background-color: inherit;
+}
+
+.navbar a:hover, .menu:hover .menu-trigger {
+  background-color: orange;
+}
+
+.menu-content {
+  display: none;
+  position: absolute;
+  background-color: darkgray;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.menu-content a {
+  float: none;
+  color: white;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: center;
+}
+
+.menu-content a:hover {
+  background-color: black;
+}
+
+.menu:hover .menu-content {
+  display:block;
+}
+
+.main-focus {
+	margin-left: auto;
+	margin-right: auto;
+	width:60%;
+}
+
+.page-header {
+	text-align: center;
+	padding: 15px
+}
+
+table {
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid black;
+	  padding: 5px 10px;
+	  margin-bottom:15px
+}
+
+a, a:visited {
+	color: orange;
+}

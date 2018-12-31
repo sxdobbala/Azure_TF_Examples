@@ -1,0 +1,26 @@
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Intellij
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Mac
+.DS_Store
+
+# Maven
+log/
+target/
+
+# Application Secrets
+${artifactId}-web/src/main/resources/application-secrets.yml
+
+# Groovy
+build/
+
+# Logging
+*.log

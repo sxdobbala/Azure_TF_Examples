@@ -1,0 +1,31 @@
+package main
+
+import (
+	"fmt"
+	"log"
+	"net"
+	"net/http"
+	"os"
+	"flag"
+)
+
+func health(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "UP")
+}
+
+func main() {
+    port := flag.String("p", "8080", "port to serve on")
+	mux := http.NewServeMux()
+	hostPort := net.JoinHostPort("0.0.0.0", os.Getenv("PORT"))
+
+    if (os.Getenv("PORT") == "") {
+        hostPort = net.JoinHostPort("0.0.0.0", *port)
+    }
+
+	mux.HandleFunc("/", landingpage)
+	mux.HandleFunc("/health", health)
+	log.Println("Starting $originalAppName service")
+	log.Printf("Listening on %s\n", hostPort)
+	server := http.Server{Handler: mux, Addr: hostPort}
+	log.Fatal(server.ListenAndServe())
+}

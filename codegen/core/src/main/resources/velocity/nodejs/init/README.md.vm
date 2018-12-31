@@ -1,0 +1,35 @@
+#set( $p = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
+${p}${p} $artifactId Project
+
+This project includes node.js with the express framework on server side and angular.js on client side.
+Also included is some of the best practices found on the web and developer preference.
+
+${p}${p} Prerequisites
+Once you have this repo cloned to your local file system.
+
+Assuming you have the latest node/npm downloaded and available through command line,
+in order to run this application on your machine, you must run the following commands:
+
+* [Bower](https://bower.io/)
+ * Package manager for client side libraries
+ * `npm install -g bower`
+* [Nodemon](https://github.com/remy/nodemon)
+ * Monitors server side changes and automatically restarts the server
+ * `npm install -g nodemon`
+
+${p}${p} Getting Started
+You will need to download all the server side and client side dependencies.
+You may do so by running `npm install`.
+
+This will download all the `node_modules` specified in `package.json` (server side)
+as well as all the `bower_components` specified in `bower.json` (client side).
+
+${p}${p} Running the application
+There are two ways to start the server:
+
+* Normal way without monitoring server side changes
+ * `npm start`
+* Developer way monitoring server side changes
+ * `npm run nodemon`

@@ -1,0 +1,3 @@
+stage('Sonar') {
+                        glSonarMavenScan productName:"$env.PAAS_PROJECT"
+                    }

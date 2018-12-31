@@ -1,0 +1,50 @@
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
+package ${package}.core.util;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.enterprise.inject.Produces;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.PersistenceContext;
+
+public class ScaffoldingResources {
+    @PersistenceContext(name = "scaffolding_persistence")
+    private EntityManager em;
+
+    @Produces
+    public EntityManager createEm() {
+        if (em == null) {
+        	        	
+        	Map<String, String> props = new HashMap<>();
+        	
+        	String dbHost = System.getenv("MYSQL_SERVICE_HOST");
+        	String dbName = System.getenv("MYSQL_DATABASE");
+        	String connUrl = "jdbc:mysql://" + dbHost + ":3306/" + dbName;
+        	props.put("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
+        	props.put("hibernate.show_sql", "true");
+        	props.put("hibernate.hbm2ddl", "validate");
+        	props.put("hibernate.connection.driver_class", "com.mysql.jdbc.Driver");
+        	props.put("hibernate.connection.url", connUrl);
+        	props.put("hibernate.connection.username", System.getenv("MYSQL_USER"));
+        	props.put("hibernate.connection.password", System.getenv("MYSQL_PASSWORD"));
+        	
+            EntityManagerFactory emf = null;
+            
+            if (dbHost == null) {
+            	emf = Persistence.createEntityManagerFactory("scaffolding_persistence");
+            }
+            else {
+            	emf = Persistence.createEntityManagerFactory("scaffolding_persistence", props);
+            }
+            em = emf.createEntityManager();
+        }
+        return em;
+    }
+
+
+}

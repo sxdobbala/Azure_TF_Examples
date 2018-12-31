@@ -1,0 +1,397 @@
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
+{
+  "kind": "Template",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "sdss-template",
+    "annotations": {
+      "description": "OpenShift Application Template for Fuse Integration Services (FIS).",
+      "iconClass": "icon-jboss",
+      "tags": "fuse,java"
+    }
+  },
+  "objects": [
+    {
+      "kind": "ImageStream",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "sdss-tomcat"
+      },
+      "spec": {
+        "dockerImageRepository": "registry.access.redhat.com/jboss-webserver-3/webserver30-tomcat8-openshift"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "annotations": {},
+        "labels": {
+          "deploymentConfig": "${symbol_dollar}{APPLICATION_NAME}",
+          "scaffold": "${symbol_dollar}{APPLICATION_NAME}"
+        },
+        "name": "${symbol_dollar}{APPLICATION_NAME}"
+      },
+      "spec": {
+        "ports": [
+          {
+            "port": 9411,
+            "protocol": "TCP",
+            "targetPort": 8080
+          }
+        ],
+        "selector": {
+          "deploymentConfig": "${symbol_dollar}{APPLICATION_NAME}",
+          "scaffold": "${symbol_dollar}{APPLICATION_NAME}"
+        }
+      }
+    },
+    {
+      "kind": "Route",
+      "apiVersion": "v1",
+      "id": "${symbol_dollar}{APPLICATION_NAME}",
+      "metadata": {
+        "name": "${symbol_dollar}{APPLICATION_NAME}",
+        "labels": {
+          "application": "${symbol_dollar}{APPLICATION_NAME}",
+          "scaffold": "${symbol_dollar}{APPLICATION_NAME}"
+        },
+        "annotations": {
+          "description": "Route for application's http service."
+        }
+      },
+      "spec": {
+        "host": "${symbol_dollar}{HOSTNAME_HTTP}",
+        "to": {
+          "name": "${symbol_dollar}{APPLICATION_NAME}"
+        }
+      }
+    },
+    {
+      "kind": "ImageStream",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${symbol_dollar}{APPLICATION_NAME}",
+        "labels": {
+          "application": "${symbol_dollar}{APPLICATION_NAME}",
+          "scaffold": "${symbol_dollar}{APPLICATION_NAME}"
+        }
+      }
+    },
+    {
+      "kind": "BuildConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${symbol_dollar}{APPLICATION_NAME}",
+        "labels": {
+          "application": "${symbol_dollar}{APPLICATION_NAME}",
+          "scaffold": "${symbol_dollar}{APPLICATION_NAME}"
+        }
+      },
+      "spec": {
+        "source": {
+          "type": "Git",
+          "git": {
+            "uri": "${symbol_dollar}{SOURCE_REPOSITORY_URL}",
+            "ref": "${symbol_dollar}{SOURCE_REPOSITORY_REF}"
+          },
+          "contextDir": "${symbol_dollar}{CONTEXT_DIR}",
+          "sourceSecret": {
+            "name": "${symbol_dollar}{SOURCE_SECRET_NAME}"
+          }
+        },
+        "strategy": {
+          "type": "Source",
+          "sourceStrategy": {
+            "forcePull": true,
+            "from": {
+              "kind": "ImageStreamTag",
+              "namespace": "${symbol_dollar}{APPLICATION_BUILDER_IMAGE_STREAM_NAMESPACE}",
+              "name": "sdss-tomcat:${symbol_dollar}{APPLICATION_BUILDER_VERSION}"
+            },
+            "env": [
+              {
+                "name": "BUILD_LOGLEVEL",
+                "value": "5"
+              },
+              {
+                "name": "ARTIFACT_DIR",
+                "value": "${symbol_dollar}{ARTIFACT_DIR}"
+              },
+              {
+                "name": "MAVEN_ARGS",
+                "value": "${symbol_dollar}{MAVEN_ARGS}"
+              },
+              {
+                "name": "MAVEN_ARGS_APPEND",
+                "value": "${symbol_dollar}{MAVEN_ARGS_APPEND}"
+              },
+              {
+                "name": "MAVEN_MIRROR_URL",
+                "value": "${symbol_dollar}{MAVEN_MIRROR_URL}"
+              },
+              {
+                "name": "MYSQL_SERVICE_HOST",
+                "value": "${symbol_dollar}{MYSQL_SERVICE_HOST}"
+              },
+              {
+                "name": "MYSQL_DATABASE",
+                "value": "${symbol_dollar}{MYSQL_DATABASE}"
+              },
+              {
+                "name": "MYSQL_USER",
+                "value": "${symbol_dollar}{MYSQL_USER}"
+              },
+              {
+                "name": "MYSQL_PASSWORD",
+                "value": "${symbol_dollar}{MYSQL_PASSWORD}"
+              }
+            ]
+          }
+        },
+        "output": {
+          "to": {
+            "kind": "ImageStreamTag",
+            "name": "${symbol_dollar}{APPLICATION_NAME}:latest"
+          }
+        },
+        "triggers": [
+          {
+            "type": "GitHub",
+            "github": {
+              "secret": "${symbol_dollar}{GITHUB_WEBHOOK_SECRET}"
+            }
+          },
+          {
+            "type": "Generic",
+            "generic": {
+              "secret": "${symbol_dollar}{GENERIC_WEBHOOK_SECRET}"
+            }
+          },
+          {
+            "type": "ImageChange",
+            "imageChange": {}
+          },
+          {
+            "type": "ConfigChange"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${symbol_dollar}{APPLICATION_NAME}",
+        "labels": {
+          "application": "${symbol_dollar}{APPLICATION_NAME}",
+          "scaffold": "${symbol_dollar}{APPLICATION_NAME}"
+        }
+      },
+      "spec": {
+        "strategy": {
+          "type": "Recreate"
+        },
+        "triggers": [
+          {
+            "type": "ImageChange",
+            "imageChangeParams": {
+              "automatic": true,
+              "containerNames": [
+                "${symbol_dollar}{APPLICATION_NAME}"
+              ],
+              "from": {
+                "kind": "ImageStream",
+                "name": "${symbol_dollar}{APPLICATION_NAME}"
+              }
+            }
+          },
+          {
+            "type": "ConfigChange"
+          }
+        ],
+        "replicas": 1,
+        "selector": {
+          "deploymentConfig": "${symbol_dollar}{APPLICATION_NAME}",
+          "scaffold": "${symbol_dollar}{APPLICATION_NAME}"
+        },
+        "template": {
+          "metadata": {
+            "name": "${symbol_dollar}{APPLICATION_NAME}",
+            "labels": {
+              "deploymentConfig": "${symbol_dollar}{APPLICATION_NAME}",
+              "scaffold": "${symbol_dollar}{APPLICATION_NAME}"
+            }
+          },
+          "spec": {
+            "terminationGracePeriodSeconds": 60,
+            "containers": [
+              {
+                "name": "${symbol_dollar}{APPLICATION_NAME}",
+                "image": "library/${symbol_dollar}{APPLICATION_NAME}:latest",
+                "ports": [
+                  {
+                    "containerPort": 8080,
+                    "name": "http"
+                  },
+                  {
+                    "containerPort": 8778,
+                    "name": "jolokia"
+                  }
+                ],
+                "env": [
+                  {
+                    "name": "KUBERNETES_NAMESPACE",
+                    "valueFrom": {
+                      "fieldRef": {
+                        "fieldPath": "metadata.namespace"
+                      }
+                    }
+                  },
+                  {
+                    "name": "DT_AGENT",
+                    "value": "${symbol_dollar}{DYNATRACE_AGENT_NAME}"
+                  },
+                  {
+                    "name": "DT_SERVER",
+                    "value": "${symbol_dollar}{DYNATRACE_SERVER}"
+                  },
+                  {
+                    "name": "MYSQL_SERVICE_HOST",
+                    "value": "${symbol_dollar}{MYSQL_SERVICE_HOST}"
+                  },
+                  {
+                    "name": "MYSQL_DATABASE",
+                    "value": "${symbol_dollar}{MYSQL_DATABASE}"
+                  },
+                  {
+                    "name": "MYSQL_USER",
+                    "value": "${symbol_dollar}{MYSQL_USER}"
+                  },
+                  {
+                    "name": "MYSQL_PASSWORD",
+                    "value": "${symbol_dollar}{MYSQL_PASSWORD}"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "name": "APPLICATION_NAME",
+      "description": "The name for the application.",
+      "value": "${ose_applicationName}",
+      "required": true
+    },
+    {
+      "name": "HOSTNAME_HTTP",
+      "description": "Custom hostname for http service route.  Leave blank for default hostname, e.g.: <application-name>-<project>.<default-domain-suffix>"
+    },
+    {
+      "name": "SOURCE_REPOSITORY_URL",
+      "description": "Git source URI for application",
+      "value": "${github_url}",
+      "required": true
+    },
+    {
+      "name": "SOURCE_REPOSITORY_REF",
+      "description": "Git branch/tag reference",
+      "value": "master"
+    },
+    {
+      "name": "CONTEXT_DIR",
+      "description": "Path within Git project to build; empty for root project directory.",
+      "value": ""
+    },
+    {
+      "name": "MAVEN_ARGS",
+      "displayName": "Maven Arguments",
+      "value": "install -Pdev -DskipTests -Dfabric8.skip -e -B",
+      "description": "Arguments passed to mvn in the build."
+    },
+    {
+      "name": "MAVEN_ARGS_APPEND",
+      "displayName": "Extra Maven Arguments",
+      "description": "Extra arguments passed to mvn, e.g. for multi-module builds."
+    },
+    {
+      "name": "MAVEN_MIRROR_URL",
+      "displayName": "Maven mirror URL",
+      "description": "Maven UHC repo url",
+      "value": "http://repo1.uhc.com/artifactory/repo/"
+    },
+    {
+      "name": "ARTIFACT_DIR",
+      "displayName": "Maven build directory",
+      "description": "Directory of the artifact to be built, e.g. for multi-module builds.",
+      "value": "web/target"
+    },
+    {
+      "name": "SOURCE_SECRET_NAME",
+      "description": "Git source secret name",
+      "required": true
+    },
+    {
+      "name": "GITHUB_WEBHOOK_SECRET",
+      "description": "GitHub trigger secret",
+      "generate": "expression",
+      "from": "[a-zA-Z0-9]{8}",
+      "required": true
+    },
+    {
+      "name": "GENERIC_WEBHOOK_SECRET",
+      "description": "Generic build trigger secret",
+      "generate": "expression",
+      "from": "[a-zA-Z0-9]{8}",
+      "required": true
+    },
+    {
+      "name": "APPLICATION_BUILDER_VERSION",
+      "displayName": "Application builder version",
+      "value": "1.2",
+      "description": "The version of the FIS S2I builder image to use."
+    },
+    {
+      "name": "APPLICATION_BUILDER_IMAGE_STREAM_NAMESPACE",
+      "description": "Namespace in which the ImageStream for the FIS Builder Resides",
+      "value": "${ose_project}"
+    },
+    {
+      "name": "DYNATRACE_SERVER",
+      "description": "Dynatrace Server."
+    },
+    {
+      "name": "DYNATRACE_AGENT_NAME",
+      "description": "Dynatrace Agent Name."
+    },
+    {
+      "name": "MYSQL_SERVICE_HOST",
+      "description": "Mysql hostname",
+      "required": true
+    },
+    {
+      "name": "MYSQL_DATABASE",
+      "description": "Mysql database name",
+      "required": true
+    },
+    {
+      "name": "MYSQL_USER",
+      "description": "Mysql username",
+      "required": true
+    },
+    {
+      "name": "MYSQL_PASSWORD",
+      "description": "Mysql password",
+      "required": true
+    }
+  ],
+  "labels": {
+    "template": "sdss-template"
+  }
+}

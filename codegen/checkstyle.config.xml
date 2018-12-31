@@ -1,0 +1,146 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+    "-//Puppy Crawl//DTD Check Configuration 1.3//EN"
+    "http://checkstyle.sourceforge.net/dtds/configuration_1_3.dtd">
+
+<module name="Checker">
+    <property name="charset" value="UTF-8"/>
+
+    <property name="severity" value="error"/>
+
+    <property name="fileExtensions" value="java, properties, xml"/>
+
+
+    <module name="FileTabCharacter">
+        <property name="eachLine" value="true"/>
+    </module>
+
+
+    <!--<module name="JavadocPackage"/>-->
+
+
+    <module name="NewlineAtEndOfFile"/>
+
+
+    <module name="Translation"/>
+
+
+    <module name="FileLength"/>
+
+    <module name="RegexpSingleline">
+        <property name="format" value="\s+$"/>
+        <property name="minimum" value="0"/>
+        <property name="maximum" value="0"/>
+        <property name="message" value="Line has trailing spaces."/>
+    </module>
+
+    <module name="TreeWalker">
+        <property name="tabWidth" value="4"/>
+        <module name="AvoidStarImport"/>
+        <module name="ConstantName"/>
+        <module name="FinalLocalVariable"/>
+        <module name="LocalFinalVariableName"/>
+
+        <module name="ConstantName"/>
+
+        <!--<module name="JavadocMethod"/>-->
+        <!--<module name="JavadocType"/>-->
+        <!--<module name="JavadocVariable"/>-->
+        <!--<module name="JavadocStyle"/>-->
+
+        <!-- FIXME: Maven build fails when using this module-->
+        <!--<module name="CatchParameterName">-->
+            <!--<property name="format" value="^[a-z]([a-z0-9][a-zA-Z0-9]*)?$"/>-->
+            <!--<message key="name.invalidPattern"-->
+                     <!--value="Catch parameter name ''{0}'' must match pattern ''{1}''."/>-->
+        <!--</module>-->
+
+        <!-- Added (e) because CatchParameterName doesnt work.-->
+        <module name="LocalVariableName">
+            <property name="format" value="^(id)|(e)|([a-z][a-z0-9][a-zA-Z0-9]+)$"/>
+            <property name="allowOneCharVarInForLoop" value="true"/>
+        </module>
+
+        <module name="AbstractClassName"/>
+        <module name="ClassTypeParameterName"/>
+        <module name="MethodTypeParameterName"/>
+
+        <module name="MemberName"/>
+        <module name="MethodName"/>
+        <module name="PackageName"/>
+        <module name="ParameterName"/>
+        <module name="StaticVariableName"/>
+        <module name="TypeName"/>
+
+        <module name="EmptyBlock"/>
+        <!--<module name="LineLength">-->
+        <!--<property name="max" value="100"/>-->
+        <!--</module>-->
+
+        <module name="OneTopLevelClass"/>
+        <module name="NoLineWrap"/>
+        <module name="NeedBraces"/>
+        <module name="WhitespaceAround"/>
+        <module name="WhitespaceAfter"/>
+        <module name="OneStatementPerLine"/>
+        <module name="MultipleVariableDeclarations"/>
+        <module name="ArrayTypeStyle"/>
+        <module name="MissingSwitchDefault"/>
+        <module name="FallThrough"/>
+        <module name="UpperEll"/>
+        <module name="ModifierOrder"/>
+
+        <module name="EmptyLineSeparator">
+            <property name="allowNoEmptyLineBetweenFields" value="true"/>
+        </module>
+
+        <!-- Do we want this? Comments have to start at the same indentation as the body it is in-->
+        <!--<module name="CommentsIndentation"/>-->
+
+        <module name="RedundantImport"/>
+        <module name="UnusedImports"/>
+        <module name="FinalParameters"/>
+
+        <module name="Indentation">
+            <property name="basicOffset" value="4"/>
+            <property name="braceAdjustment" value="0"/>
+            <property name="caseIndent" value="4"/>
+            <property name="throwsIndent" value="4"/>
+        </module>
+
+        <module name="MissingOverride"/>
+        <module name="ArrayTrailingComma"/>
+        <module name="DeclarationOrder"/>
+        <module name="DefaultComesLast"/>
+        <module name="EmptyStatement"/>
+        <module name="EqualsAvoidNull"/>
+        <module name="EqualsHashCode"/>
+        <module name="AvoidStaticImport"/>
+        <module name="IllegalImport"/>
+
+        <module name="TodoComment">
+            <property name="format" value="(TODO)|(FIXME)"/>
+        </module>
+
+        <module name="EmptyForInitializerPad"/>
+        <module name="EmptyForIteratorPad"/>
+        <module name="GenericWhitespace"/>
+        <module name="MethodParamPad"/>
+        <module name="NoLineWrap"/>
+        <module name="ParenPad"/>
+
+        <!-- FIXME:  Maven fails on this module?? not picking up the name -->
+        <!--<module name="SingleSpaceSeparator"/>-->
+
+        <module name="TypecastParenPad"/>
+        <module name="HideUtilityClassConstructor"/>
+        <module name="InnerAssignment"/>
+        <module name="LeftCurlyCheck"/>
+        <module name="RightCurly"/>
+
+        <module name="IllegalCatch"/>
+        <module name="IllegalImport"/>
+        <module name="IllegalInstantiation"/>
+        <module name="IllegalThrows"/>
+    </module>
+</module>

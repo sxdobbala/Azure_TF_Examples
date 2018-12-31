@@ -1,0 +1,29 @@
+#set( $p = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
+${p}${p} $originalAppName Project
+
+This project is a Flask-based Python service.
+
+${p}${p} Prerequisites
+Once you have this repo cloned to your local file system you can use python installed locally to run it.
+
+First you must use pip to download the required modules. If you don't have pip, you can run the below command to install it (will require admin access)
+
+sudo easy_install pip
+
+Next run the following command from within your project folder to download the required modules:
+
+pip install --no-cache-dir -r requirements.txt
+
+
+${p}${p} Running the application locally
+To run the server locally, navigate to the project folder in a terminal and enter the following command:
+
+python wsgi.py
+
+
+${p}${p} Extending this template
+For information on extending this flask project, check out the official flask documentation at http://flask.pocoo.org/docs/1.0/
+
+Additional documentation for this template project is available at <https://github.optum.com/pages/cloud-scaffolding/docs/codegen/python>

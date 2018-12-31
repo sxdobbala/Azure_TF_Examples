@@ -1,0 +1,71 @@
+#set( $pound = '#' )
+$pound New OPI API - ${artifactId}
+This is a new OPI API generated from Cloud Scaffolding that will be registered with the Payment Integrity API Catalog.
+
+$pound$pound Getting Started
+
+$pound$pound$pound Prerequisites
+What things you need to install the software and how to install them
+
+$pound$pound$pound$pound Self-discovery
+You can use this Jenkins Pipeline Library method in order to easily publish your API to the Catalog. Simply add a new Global Pipeline Library to your Jenkins instance or Central folder with the following url: https://github.optum.com/opi-api/global-pipeline-library
+
+If you do not already load in a pipeline library, then add the following line at the top of your `Jenkinsfile`:
+```groovy
+@Library('opi-library@v1.0') _
+```
+
+If you already have a library loaded, you can load multiple libraries with this syntax:
+```groovy
+@Library(['com.optum.jenkins.pipeline.library@v0.1.23','opi-library@v1.0']) _
+```
+
+Then add this step into your `Jenkinsfile`:
+```groovy
+glCatalogPublish jwtCredentialsId:"YOUR_JWT_CREDS"
+```
+`YOUR_JWT_CREDS` should point to a Jenkins credential id with your token and secret you were given on the Catalog Registration page.
+
+Refer to [this documentation](https://github.optum.com/opi-api/catalog-discovery) for more information about the discovery service.
+
+$pound$pound$pound$pound Properties file
+One of the files that has been generated is the `apicatalog.json` file. This is necessary for your API to publish metadata to the API Catalog. You will need to fill in some parameters specific to your API
+
+$pound$pound$pound$pound Manifest file
+The `manifest.json` that was created is just a copy of the `json` body that you passed to codegen. This is not a part of your new API, but might be helpful to keep if you want to use it to create a new API with `codegen`
+
+$pound$pound$pound$pound Swagger Documentation
+This boiler plate also configures Swagger to work with the exposed API. If you run your project, go to `localhost:8080/swagger-ui.html` to see the Swagger documentation. You can also see the `json` or `yml` if you browse to the `/v2/api-docs` endpoint.
+
+$pound$pound$pound$pound OpenAPI Specification
+This API's Swagger documentation already follows the [OpenAPI Spec](https://www.optumdeveloper.com/content/odv-optumdev/optum-developer/en/developer-centers/apis/documentation-and-other-resources/api-design-best-practices.html), which is required for all RESTful APIs at Optum.
+
+$pound$pound$pound Installation
+*Include any additional step by step installation instructions of the product for consumers, perhaps include multiple platforms.*
+
+Local development:
+* Clone this repository
+* Open a terminal window
+* Navigate to directory of this project
+* Run `mvn package`
+* Run `mvn spring-boot:run`
+* Open a browser and go to `localhost:8080` and the root endpoint response should be displayed
+
+$pound$pound$pound Usage Example
+Provide examples of this API's endpoints and how to use them
+
+$pound$pound Contributing
+Please refer to [Contribution Guidelines](CONTRIBUTING.md) for guidance on contributing to this project.
+There is also a [pull request template](PULL_REQUEST_TEMPLATE) in this repo for guiding contributors through the pull request process.
+
+$pound$pound Maintainers
+List maintainers with email address
+
+$pound$pound Version History
+Include a version history here
+
+$pound$pound License
+Insert your project license details here
+
+$pound$pound Acknowledgements
+List any acknowledgements here

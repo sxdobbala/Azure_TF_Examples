@@ -1,0 +1,31 @@
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
+
+# Set to base nodeJS image
+FROM docker.optum.com/optum_et/alpine-node:6.11.3
+
+# Expose port
+EXPOSE 8080
+
+# Set env variables for node app
+ENV PORT 8080
+
+# Define working directory and copy source files in
+USER root
+RUN mkdir -p /$originalAppName
+WORKDIR /$originalAppName
+COPY . /$originalAppName
+
+# Remove extraneous files from container.
+RUN rm -f /$originalAppName/manifest.json /$originalAppName/Dockerfile /$originalAppName/Jenkinsfile
+
+#install dependencies
+RUN npm install
+
+# run as non-root user
+RUN chown -R 1001:1001 /$originalAppName
+USER 1001
+
+# Run app using nodemon
+CMD ["npm", "start"]

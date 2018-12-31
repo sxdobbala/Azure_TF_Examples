@@ -1,0 +1,15 @@
+# ${artifactId} service
+This service was created through cloud scaffolding
+
+# Getting Started
+Running this service locally requires only maven and java.
+Running "mvn clean install" in the root of the directory will create a jar file in the web/target directory.
+After the maven build, you can run "java -jar web/target/ROOT.jar" to run the service.
+
+Additional documentation for this template project is available at <https://github.optum.com/pages/cloud-scaffolding/docs/codegen/sdss>
+
+# Maintainers (Authors)
+> *List maintainers with email address
+
+# License
+> *INSERT YOUR PROJECT LICENSE DETAILS HERE*

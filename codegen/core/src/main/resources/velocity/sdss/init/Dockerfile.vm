@@ -1,0 +1,2 @@
+FROM docker.optum.com/cloudscaffolding/alpine-java:openjdk-beta
+COPY web/target/ROOT.jar /opt/optum/app.jar

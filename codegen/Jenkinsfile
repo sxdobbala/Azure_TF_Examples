@@ -1,0 +1,282 @@
+#!groovy
+def OPENSHIFT_CRED_ID = 'pbi-develop'
+def OPENSHIFT_CLUSTER = 'https://ocp-ctc-core-nonprod.optum.com'
+def OPENSHIFT_CLUSTER_2 = 'https://ocp-elr-core-nonprod.optum.com'
+def OPENSHIFT_PROD_NAMESPACE = 'pbi-devops'
+def OPENSHIFT_TEST_NAMESPACE = 'pbi-devops-test'
+def OPENSHIFT_DEV_NAMESPACE = 'pbi-devops-dev'
+def OPENSHIFT_SERVICE = 'codegen-jboss-tomcat'
+def DOCKER_NAME = 'codegen'
+def PROD_ARTIFACTORY_HOST ='https://repo1.uhc.com/artifactory'
+def REPO_URL = 'https://github.optum.com/cloud-scaffolding/codegen.git'
+def GITHUB_CRED_ID = 'c6efeb42-c98b-472b-8c52-30d60d37b027'
+def DOCKER_CREDS_ID = 'docker-publish-creds'
+def LANGUAGE_TYPE = 'java'
+def ARTIFACTS_PATH = 'web/target'
+def ARTIFACTS_NAME = 'artifacts'
+
+def cluster = OPENSHIFT_CLUSTER.split('://')
+def DEV_SERVICE_HOST = cluster[0] + '://' + OPENSHIFT_SERVICE + '-' + OPENSHIFT_DEV_NAMESPACE + '.' + cluster[1]
+def TEST_SERVICE_HOST = cluster[0] + '://' + OPENSHIFT_SERVICE + '-' + OPENSHIFT_TEST_NAMESPACE + '.' + cluster[1]
+
+def rtMaven = Artifactory.newMavenBuild()
+def ARTIFACTORY_RELEASE_REPO = "UHG-Releases"
+def ARTIFACTORY_SNAPSHOT_REPO = "UHG-Snapshots"
+def ARTIFACTORY_RESOLVE_RELEASE_REPO = "libs-releases"
+def ARTIFACTORY_RESOLVE_SNAPSHOT_REPO = "libs-snapshots"
+
+@Library(["com.optum.jenkins.pipeline.library@v0.1.24", "com.optum.jenkins.pipeline.pbi.library@master"]) _
+
+try{
+    node('docker-maven-slave') {
+        properties(
+            [
+                [$class: 'BuildConfigProjectProperty', name: '', namespace: '', resourceVersion: '', uid: ''],
+                parameters(
+                    [
+                        string(defaultValue: 'develop', description: '', name: 'REPO_BRANCH'),
+                        booleanParam(defaultValue: true, description: '', name: 'RUN_TESTS'),
+                        booleanParam(defaultValue: true, description: '', name:  'RUN_INT_TESTS'),
+                        booleanParam(defaultValue: true, description: '', name: 'DO_DEPLOY')
+                    ]
+                ),
+                pipelineTriggers([])
+            ]
+        )
+
+        stage('Build') {
+            build(LANGUAGE_TYPE, REPO_URL, params.REPO_BRANCH, ARTIFACTS_NAME, GITHUB_CRED_ID, BRANCH_NAME)
+        }
+
+        stage('Unit Tests') {
+            if(params.RUN_TESTS) {
+                unitTestWithoutSecretsFile(LANGUAGE_TYPE, ARTIFACTS_NAME)
+            }
+        }
+
+        milestone()
+        stage('Build Image on OCP') {
+            if(params.DO_DEPLOY) {
+                if(currentBuild.result == 'SUCCESS'){
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: OPENSHIFT_CRED_ID, passwordVariable: 'OC_PASSWORD', usernameVariable: 'OC_USER']]) {
+                        sh 'git rev-parse HEAD > commit'
+                        COMMIT_HASH = readFile('commit').trim()
+                        BUILD_NUMBER = env.BUILD_NUMBER
+                        def pom = readMavenPom file: 'pom.xml'
+                        POM_VERSION = pom.version.replace("-SNAPSHOT", ".${currentBuild.number}")
+                        sh '''echo 'FROM docker.optum.com/cloudscaffolding/dtc-dtsaas:1.0' >> Dockerfile'''
+                        sh "echo 'COPY ${ARTIFACTS_PATH}/ROOT.war /opt/webserver/webapps/ROOT.war' >> Dockerfile"
+                        sh '''echo 'USER root' >> Dockerfile'''
+                        sh '''echo 'ENV DT_INSTALL_DIR /var/lib/dynatrace/oneagent' >> Dockerfile'''
+                        sh '''echo 'CMD $DT_INSTALL_DIR/dynatrace-agent64.sh /opt/webserver/bin/launch.sh' >> Dockerfile'''
+                        sh '''echo 'USER 1001' >> Dockerfile'''
+                        sh "echo 'ENV COMMIT_ID $COMMIT_HASH' >> Dockerfile"
+                        sh "echo 'ENV POM_VERSION $POM_VERSION' >> Dockerfile"
+                        sh "echo 'ENV JOB_NUMBER $BUILD_NUMBER' >> Dockerfile"
+                        if(BRANCH_NAME == 'develop' && params.REPO_BRANCH == 'develop'){
+                            glDockerImageBuildPush tag:'docker.optum.com/cloudscaffolding/codegen:test', dockerCredentialsId: DOCKER_CREDS_ID
+                            doOpenshiftDockerDeploy(OPENSHIFT_CRED_ID, OPENSHIFT_CLUSTER, OPENSHIFT_TEST_NAMESPACE, DOCKER_NAME, 'test')
+                        }
+                        else {
+                            glDockerImageBuildPush tag:'docker.optum.com/cloudscaffolding/codegen:dev', dockerCredentialsId: DOCKER_CREDS_ID
+                            doOpenshiftDockerDeploy(OPENSHIFT_CRED_ID, OPENSHIFT_CLUSTER, OPENSHIFT_DEV_NAMESPACE, DOCKER_NAME, 'dev')
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Integration Tests'){
+            if(params.RUN_INT_TESTS) {
+                unstash ARTIFACTS_NAME
+                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: OPENSHIFT_CRED_ID, passwordVariable: 'OC_PASSWORD', usernameVariable: 'OC_USER']]) {
+                    sh """oc login --server=${OPENSHIFT_CLUSTER} -u=${env.OC_USER} -p=${env.OC_PASSWORD} --insecure-skip-tls-verify"""
+                    if(BRANCH_NAME == 'develop' && params.REPO_BRANCH == 'develop') {
+                        sh """oc project ${OPENSHIFT_TEST_NAMESPACE}"""
+                    }
+                    else {
+                        sh """oc project ${OPENSHIFT_DEV_NAMESPACE}"""
+                    }
+                    sh """oc get pods | grep ${OPENSHIFT_SERVICE} | grep -v deploy | grep -v build | awk '\$3 == "Running" {print \$1}' > runningPod.txt"""
+                    def runningPod = readFile('runningPod.txt').trim()
+                    glRetry(times: 30, delay: 10){
+                        echo "Has pod " + runningPod + " been killed yet?"
+                        sh "oc get pod \$(cat runningPod.txt) | grep ${OPENSHIFT_SERVICE} | awk '{print \$1}' > currentPod.txt"
+                        def currentPod = readFile('currentPod.txt').trim()
+                        print runningPod + " " + currentPod
+                        if(runningPod == currentPod){
+                            throw new Exception("Not yet deployed.")
+                        }
+                    }
+                    sh """oc logout"""
+                    glRetry(times: 5, delay: 10){
+                        echo "Is the service alive?"
+                        if(BRANCH_NAME == 'develop' && params.REPO_BRANCH == 'develop') {
+                            sh """curl ${TEST_SERVICE_HOST}/api/v1/healthCheck | grep Health > serviceStatus.txt"""
+                        }
+                        else {
+                            sh """curl ${DEV_SERVICE_HOST}/api/v1/healthCheck | grep Health > serviceStatus.txt"""
+                        }
+                        def status = readFile('serviceStatus.txt').trim()
+                        print status
+                        if(status == ''){
+                            throw new Exception("Not alive yet.")
+                        }
+                    }
+                }
+                withCredentials([[$class: 'FileBinding', credentialsId: 'int-test-secrets.yml', variable: 'APPLICATION_SECRETS']]) {
+                    sh '''
+                        cat $APPLICATION_SECRETS > integration-tests/src/test/resources/application-secrets.yml
+                    '''
+                    if(BRANCH_NAME == 'develop' && params.REPO_BRANCH == 'develop') {
+                        withEnv(['CODEGEN_SERVICE_HOST='+TEST_SERVICE_HOST, 'ARTIFACTORY_HOST='+PROD_ARTIFACTORY_HOST]) {
+                            glMavenBuild mavenGoals: 'test -f integration-tests/pom.xml -Dmaven.test.failure.ignore'
+                        }
+                    }
+                    else {
+                        withEnv(['CODEGEN_SERVICE_HOST='+DEV_SERVICE_HOST, 'ARTIFACTORY_HOST='+PROD_ARTIFACTORY_HOST]) {
+                            glMavenBuild mavenGoals: 'test -f integration-tests/pom.xml -Dmaven.test.failure.ignore'
+                        }
+                    }
+
+                }
+                step([$class: 'JUnitResultArchiver', testResults: 'integration-tests/target/surefire-reports/*.xml'])
+            }
+            stash name: 'source', useDefaultExcludes: false
+        }
+
+        milestone()
+        stage('Release Jar to Artifactory') {
+            def artifactoryResolverServer = Artifactory.newServer url: PROD_ARTIFACTORY_HOST, credentialsId: 'artifactory'
+            def buildInfo = Artifactory.newBuildInfo()
+            rtMaven.deployer server: artifactoryResolverServer, releaseRepo: ARTIFACTORY_RELEASE_REPO, snapshotRepo: ARTIFACTORY_SNAPSHOT_REPO
+            rtMaven.run pom: 'pom.xml', goals: 'clean install -DskipTests', buildInfo: buildInfo
+            artifactoryResolverServer.publishBuildInfo buildInfo
+        }
+
+    }
+
+    if(currentBuild.result == 'SUCCESS' && params.RUN_TESTS && params.RUN_INT_TESTS && params.DO_DEPLOY && BRANCH_NAME == 'develop' && params.REPO_BRANCH == 'develop') {
+        milestone()
+        stage('Approval'){
+            timeout(time: 1, unit: 'DAYS') {
+                releaseInput = input([
+                    message: 'Release?',
+                    parameters: [
+                        string([
+                            defaultValue: "Jenkins Build: ${env.BUILD_NUMBER} Ready for Production",
+                            description: "Deploy ${env.BUILD_NUMBER} to production.",
+                            name: 'RELEASE_COMMENTS'
+                        ])
+                    ],
+                    submitter: 'cloud_scaffolding_dev',
+                    submitterParameter: 'RELEASE_APPROVER'
+                ])
+                submitterParameter: 'RELEASE_APPROVER'
+                echo "Release approved by: ${releaseInput['RELEASE_APPROVER']}, with comments: ${releaseInput['RELEASE_COMMENTS']}"
+            }
+        }
+
+        node('docker-maven-slave') {
+
+            stage('Bump Snapshot Version') {
+                unstash 'source'
+                def artifactoryResolverServer = Artifactory.newServer url: PROD_ARTIFACTORY_HOST, credentialsId: 'artifactory'
+                rtMaven = Artifactory.newMavenBuild()
+                rtMaven.resolver server: artifactoryResolverServer, releaseRepo: ARTIFACTORY_RESOLVE_RELEASE_REPO, snapshotRepo: ARTIFACTORY_RESOLVE_SNAPSHOT_REPO
+
+                rtMaven.run pom: 'pom.xml', goals: 'clean build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.nextIncrementalVersion}-SNAPSHOT'
+
+                def newVer = readMavenPom file: 'pom.xml'
+
+                println "New POM Version is: ${newVer.version}"
+
+                tagCommitPush(GITHUB_CRED_ID, "${newVer.version}", REPO_URL)
+            }
+
+            stage('Promote to Prod'){
+                glDockerRetagRemoteImage(dockerCredentialsId: DOCKER_CREDS_ID, namespace: 'cloudscaffolding', repository: 'codegen', sourceTag: 'rollback', destTag: 'rollback2')
+                glDockerRetagRemoteImage(dockerCredentialsId: DOCKER_CREDS_ID, namespace: 'cloudscaffolding', repository: 'codegen', sourceTag: 'prod', destTag: 'rollback')
+                glDockerImageTag sourceTag: 'docker.optum.com/cloudscaffolding/codegen:test', destTag: 'docker.optum.com/cloudscaffolding/codegen:prod'
+                glDockerImagePush tag:'docker.optum.com/cloudscaffolding/codegen:prod', dockerCredentialsId: DOCKER_CREDS_ID
+                doOpenshiftDockerDeploy(OPENSHIFT_CRED_ID, OPENSHIFT_CLUSTER, OPENSHIFT_PROD_NAMESPACE, DOCKER_NAME, 'prod')
+                doOpenshiftDockerDeploy(OPENSHIFT_CRED_ID, OPENSHIFT_CLUSTER_2, OPENSHIFT_PROD_NAMESPACE, DOCKER_NAME, 'prod')
+            }
+        }
+    }
+    stage('Notify') {
+        notifyComplete()
+    }
+}
+catch (e) {
+    currentBuild.result = 'FAILED'
+    notifyFailed("")
+    throw e
+}
+
+def notifyComplete() {
+    emailext([
+        body:
+            """
+                Deployment to Codegen dev origin environment attempted with status ${currentBuild.result}<br>
+                <a href=\"${env.JOB_URL}\">${env.JOB_URL}</a><br/>
+                <a href=\"${env.JOB_URL}${env.BUILD_NUMBER}/testReport\">${env.JOB_URL}${env.BUILD_NUMBER}/testReport</a><br/>
+                <a href=\"${env.JOB_URL}${env.BUILD_NUMBER}/changes\">${env.JOB_URL}${env.BUILD_NUMBER}/changes</a><br/>
+                <a href=\"${env.JOB_URL}${env.BUILD_NUMBER}/console\">${env.JOB_URL}${env.BUILD_NUMBER}/console</a><br/>
+            """,
+        mimeType: 'text/html',
+        from: 'noreply@optum.com',
+        replyTo: 'noreply@optum.com',
+        subject: 'Deployment to Codegen Origin Dev',
+        recipientProviders: [[$class: 'RequesterRecipientProvider'], [$class: 'DevelopersRecipientProvider']]
+    ])
+}
+
+def notifyFailed(String message) {
+    emailext([
+        body:
+            """
+                Deployment to Codegen dev origin environment attempted with status ${currentBuild.result}<br>
+                <a href=\"${env.JOB_URL}\">${env.JOB_URL}</a><br/>
+                <a href=\"${env.JOB_URL}${env.BUILD_NUMBER}/changes\">${env.JOB_URL}${env.BUILD_NUMBER}/changes</a><br/>
+                <a href=\"${env.JOB_URL}${env.BUILD_NUMBER}/console\">${env.JOB_URL}${env.BUILD_NUMBER}/console</a><br/>
+            """ + message,
+        mimeType: 'text/html',
+        from: 'noreply@optum.com',
+        replyTo: 'noreply@optum.com',
+        subject: 'Deployment to Codegen Origin Dev',
+        recipientProviders: [[$class: 'RequesterRecipientProvider'], [$class: 'DevelopersRecipientProvider']]
+    ])
+}
+
+def tagCommitPush(String credentialsId, String version, String repoUrl, Boolean tag=false) {
+    withCredentials([usernamePassword(credentialsId: credentialsId, usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASSWORD')]) {
+        sh """
+            set +x
+            GIT_PASS_URL_ENCODED=\$(python -c "import urllib, sys; print urllib.quote(sys.argv[1])" \"${GIT_PASSWORD}")
+            GIT_CREDENTIALS=$GIT_USER:\$GIT_PASS_URL_ENCODED
+            REPO_URL_PROTOCOL=\$(echo "$repoUrl" | grep :// | sed -e's,^\\(.*://\\).*,\\1,g')
+            REPO_URL_WITHOUT_PROTOCOL=\$(echo "$repoUrl" | sed -e s,\${REPO_URL_PROTOCOL},,g)
+            git config user.name '$GIT_USER'
+            git config user.email '$GIT_USER@optum.com'
+            # Tag
+            git commit -a -m "Bumped to version ${version}"
+            if [ "$tag" = true ]; then
+                git tag -a "v${version}" -m "Release version ${version}"
+            fi
+            git push \${REPO_URL_PROTOCOL}\${GIT_CREDENTIALS}@\${REPO_URL_WITHOUT_PROTOCOL} $REPO_BRANCH --tags &> /dev/null
+        """
+}
+}
+
+def doOpenshiftDockerDeploy(String openshiftCreds, String cluster, String project, String service, String tag){
+    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: openshiftCreds, passwordVariable: 'OC_PASSWORD', usernameVariable: 'OC_USER']]) {
+        sh """
+            oc login --server=${cluster} -u=${env.OC_USER} -p=${env.OC_PASSWORD} --insecure-skip-tls-verify
+            oc project ${project}
+            oc delete rc \$(oc get rc | grep ${service} | awk '\$2 == 0 {print \$1}') || echo "NO REPLICATION CONTROLLERS TO CLEAN UP"
+            oc import-image ${service}-docker:${tag}
+            oc logout
+        """
+    }
+}

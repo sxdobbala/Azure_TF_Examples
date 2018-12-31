@@ -1,0 +1,23 @@
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
+#set( $symbol_quote = '"' )
+{
+    "API Name": $symbol_quote$api_name$symbol_quote,
+    "API URL": "<your-api-url>",
+    "identifier": $symbol_quote$identifier$symbol_quote,
+    "Description": $symbol_quote$description$symbol_quote,
+    "Metadata": {
+        "Swagger URL": "<your-swagger-url>",
+        "Repository": {
+            "Repository Name": $symbol_quote$repository_name$symbol_quote,
+            "Repository URL": $symbol_quote$repository_url$symbol_quote
+        },
+        "Monitoring Service": {
+            "Service Name": "<your-monitoring-service-name>",
+            "Service URL": "<your-monitoring-service-url>"
+        },
+        "Environment": "Dev",
+        "Taxonomy": "/api/dev/domain/$api_name/v1.0"
+    }
+}

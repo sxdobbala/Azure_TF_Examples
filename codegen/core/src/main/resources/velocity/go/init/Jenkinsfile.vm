@@ -1,0 +1,59 @@
+@Library("com.optum.jenkins.pipeline.library@v0.1.23") _
+
+pipeline {
+  agent none
+  environment {
+    CREDS_ID = 'id-for-access'
+    GITHUB_REPO_BRANCH = 'master'
+    PAAS_SERVER = '${paas_server}'
+    PAAS_PROJECT = '${paas_project}'
+    PAAS_APP = '${originalAppName}'
+    FRIENDLY_URL = '${friendly_url}'
+    DOCKER_IMAGE = 'docker.optum.com/${projectOwner}/${paas_project}:${originalAppName}'
+    OPENSHIFT_CREDENTIALS_ID = 'id-for-access'
+    DEVOPS_METRICS_ENABLED = true
+  }
+  stages {
+    stage('Checkout SCM'){
+    agent { label 'docker-kitchensink-slave'}
+      steps{
+        script{
+              stage ('Build Application') {
+		        sh '''
+		          . /etc/profile.d/jenkins.sh
+		          CGO_ENABLED=0 GOOS=linux go build -o $originalAppName -a -tags netgo -ldflags '-w' .
+		        '''
+    			}
+
+			    stage ('Build Docker Image') {
+			        glDockerImageBuildPush tag: "$env.DOCKER_IMAGE", dockerCredentialsId: "$env.CREDS_ID"
+			    }
+			    stage ('Deploy Application'){
+			        ${deploy}
+			    }
+
+        }
+      }
+    }
+    ${arachni}
+  }
+
+  post {
+    always {
+      echo 'This will always run'
+    }
+    success {
+      echo 'This will run only if successful'
+    }
+    failure {
+      echo 'This will run only if failed'
+    }
+    unstable {
+      echo 'This will run only if the run was marked as unstable'
+    }
+    changed {
+      echo 'This will run only if the state of the pipeline has changed'
+      echo 'For example, if the pipeline was previously failing but is now successful'
+    }
+  }
+}
