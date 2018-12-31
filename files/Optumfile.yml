@@ -1,8 +1,0 @@
-apiVersion: v1
-metadata:
-  askId: pending
-  caAgileId: https://rally1.rallydev.com/#/229072127100ud/dashboard
-  projectKey: com.optum.acc.fileupload:azure-file-upload
-  projectFriendlyName: Azure-File-Upload
-  componentType: code
-  targetQG: GATE_08
