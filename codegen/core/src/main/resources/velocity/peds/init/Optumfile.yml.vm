@@ -1,9 +1,0 @@
-apiVersion: v1
-metadata:
-  askId: ${askId}
-  caAgileId: poc
-  projectKey: com.optum.${team}:${artifactId}
-  projectFriendlyName: ${team}-${artifactId}
-  projectName: ${originalAppName}
-  componentType: code
-  targetQG: GATE_00

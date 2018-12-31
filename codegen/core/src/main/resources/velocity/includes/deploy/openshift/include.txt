@@ -1,9 +1,0 @@
-withCredentials([usernamePassword(credentialsId: env.CREDS_ID, usernameVariable: 'OS_USER', passwordVariable: 'OS_PASS')]) {
-                        sh """
-                            oc login $PAAS_SERVER -u $OS_USER -p $OS_PASS --insecure-skip-tls-verify=true
-                            oc project $PAAS_PROJECT
-                            oc tag $DOCKER_IMAGE $PAAS_APP:$PAAS_APP
-                            oc deploy $PAAS_APP
-                            oc logout
-                        """
-                    }

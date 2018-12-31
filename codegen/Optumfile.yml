@@ -1,8 +1,0 @@
-apiVersion: v1
-metadata:
-  askId: UHGWM110-018158
-  caAgileId: poc
-  projectKey: com.optum.cloud.scaffolding:codegen
-  projectFriendlyName: Cloud-Scaffolding
-  componentType: code
-  targetQG: GATE_00

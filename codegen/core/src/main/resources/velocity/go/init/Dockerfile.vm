@@ -1,9 +1,0 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
-
-FROM       scratch
-ADD        $originalAppName $originalAppName
-ENV        PORT 8080
-EXPOSE     8080
-ENTRYPOINT ["/$originalAppName"]
