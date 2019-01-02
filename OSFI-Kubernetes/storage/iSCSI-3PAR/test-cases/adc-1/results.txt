@@ -1,0 +1,31 @@
+# kubectl get pvc -n ns-iscsi1
+NAME                       STATUS    VOLUME                    CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+iscsi-pvc-chap-lun-1       Bound     iscsi-pv-chap-lun-1       10Gi       RWO                           6m
+iscsi-pvc-chap-lun-1-2nd   Bound     iscsi-pv-chap-lun-1-2nd   10Gi       RWO                           6m
+root@lablcactus05:/root/iscsi-test/chap/test-cases/adc-1
+# kubectl get po -n ns-iscsi1
+NAME                       READY     STATUS              RESTARTS   AGE
+pod-iscsi-chap-lun-1       1/1       Running             0          6m
+pod-iscsi-chap-lun-1-2nd   0/1       ContainerCreating   0          6m
+root@lablcactus05:/root/iscsi-test/chap/test-cases/adc-1
+# kubectl get pvc -n ns-iscsi1
+NAME                       STATUS    VOLUME                    CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+iscsi-pvc-chap-lun-1       Bound     iscsi-pv-chap-lun-1       10Gi       RWO                           6m
+iscsi-pvc-chap-lun-1-2nd   Bound     iscsi-pv-chap-lun-1-2nd   10Gi       RWO                           6m
+root@lablcactus05:/root/iscsi-test/chap/test-cases/adc-1
+# kubectl get po -n ns-iscsi1 -o wide
+NAME                       READY     STATUS              RESTARTS   AGE       IP            NODE
+pod-iscsi-chap-lun-1       1/1       Running             0          6m        10.244.3.13   lablcactus12
+pod-iscsi-chap-lun-1-2nd   0/1       ContainerCreating   0          6m        <none>        lablcactus13
+
+kubectl describe po pod-iscsi-chap-lun-1-2nd  -n ns-iscsi1
+
+Events:
+  Type     Reason                 Age               From                     Message
+  ----     ------                 ----              ----                     -------
+  Warning  FailedScheduling       9m (x2 over 9m)   default-scheduler        pod has unbound PersistentVolumeClaims (repeated 3 times)
+  Normal   Scheduled              9m                default-scheduler        Successfully assigned pod-iscsi-chap-lun-1-2nd to lablcactus13
+  Warning  FailedAttachVolume     9m                attachdetach-controller  Multi-Attach error for volume "iscsi-pv-chap-lun-1-2nd" Volume is already used by pod(s) pod-iscsi-chap-lun-1
+  Normal   SuccessfulMountVolume  9m                kubelet, lablcactus13    MountVolume.SetUp succeeded for volume "default-token-bhvkt"
+  Warning  FailedMount            17s (x4 over 7m)  kubelet, lablcactus13    Unable to mount volumes for pod "pod-iscsi-chap-lun-1-2nd_ns-iscsi1(f3fa76d7-5c33-11e8-a7e5-40a8f030092c)": timeout expired waiting for volumes to attach or mount for pod "ns-iscsi1"/"pod-iscsi-chap-lun-1-2nd". list of unmounted volumes=[iscsi-vol]. list of unattached volumes=[iscsi-vol default-token-bhvkt]
+

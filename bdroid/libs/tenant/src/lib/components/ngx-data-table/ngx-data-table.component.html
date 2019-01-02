@@ -1,0 +1,89 @@
+<div class="mat-elevation-z8">
+  <mat-toolbar *ngIf="_showToolbar">
+    <mat-form-field>
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter" class="filter">
+    </mat-form-field>
+    <button *ngIf="_showColumnFilter" mat-icon-button style="margin-left: 16px" type="button"
+            [matMenuTriggerFor]="columnFilter">
+      <mat-icon>filter_list</mat-icon>
+    </button>
+    <mat-menu #columnFilter="matMenu" yPosition="below" xPosition="before">
+      <div class="checkbox-item mat-menu-item" *ngFor="let column of _allDataColumns">
+        <mat-checkbox [checked]="column.visible" (change)="toggleColumnVisibility(column)" class="checkbox" #checkbox>
+          {{ column.header }}
+        </mat-checkbox>
+      </div>
+    </mat-menu>
+    <button *ngIf="displayActionColumn" mat-mini-fab color="primary" style="margin-left: 16px" (click)="openPopUp()"
+            matTooltip="add">
+      <mat-icon>add</mat-icon>
+    </button>
+    <button mat-mini-fab color="info" style="margin-left: 16px" (click)="exportToCSV()" matTooltip="download">
+      <mat-icon>cloud_download</mat-icon>
+    </button>
+  </mat-toolbar>
+  <div #TABLE>
+    <mat-table #table [dataSource]="dataSource" matSort aria-label="Elements">
+      <ng-container [matColumnDef]="column.property" *ngFor="let column of _dataColumns; let i = index">
+
+        <ng-container *ngIf="!column.cellTemplate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{column.header}}</mat-header-cell>
+          <mat-cell *matCellDef="let element" [ngClass]="{'col-value': element.details === undefined}">
+            <!-- expand caret -->
+            <span *ngIf="i === 0 && element.details && _displayDetails">
+              <span *ngIf="expandedElement && expandedElement[column] === element[column]; else plusIcon"
+                    class="expand-icon">&#9650;</span>
+              <ng-template #plusIcon><span class="expand-icon">&#9660;</span></ng-template>
+            </span>
+            <span>{{column.displayFn(element)}}</span>
+          </mat-cell>
+        </ng-container>
+        <ng-container *ngIf="column.cellTemplate">
+          <mat-header-cell mat-header-cell *matHeaderCellDef> {{column.header}} </mat-header-cell>
+          <mat-cell *matCellDef="let element" [ngClass]="{'col-value': element.details === undefined}">
+            <ng-template
+              [ngTemplateOutletContext]="{element: element,column: column}"
+              [ngTemplateOutlet]="column.cellTemplate">
+            </ng-template>
+          </mat-cell>
+        </ng-container>
+      </ng-container>
+      <ng-container [matColumnDef]="actionColumn" sticky>
+        <mat-header-cell *matHeaderCellDef>{{actionColumn}}</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <button type="button" (click)="openPopUp(element)" color="primary" mat-icon-button>
+            <mat-icon>edit_mode</mat-icon>
+          </button>
+
+          <button type="button" (click)="delete(element).subscribe()" color="warn" mat-icon-button>
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-cell>
+      </ng-container>
+
+      <!-- Expanded Content Column - The detail row is made up of this one column -->
+      <ng-container matColumnDef="expandedDetail">
+        <mat-cell *matCellDef="let detail">
+          <ngx-data-detail-table class="detail-table"></ngx-data-detail-table>
+        </mat-cell>
+      </ng-container>
+
+
+      <mat-header-row *matHeaderRowDef="_displayedColumns; sticky: true"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: _displayedColumns;"
+               [class.expanded]="expandedElement == row"
+               (click)="toggleRow(row)"></mat-row>
+      <mat-row *matRowDef="let row; columns: ['expandedDetail']; when: isExpansionDetailRow"
+               [@detailExpand]="row.element == expandedElement ? 'expanded' : 'collapsed'"
+               style="overflow: hidden"></mat-row>
+    </mat-table>
+
+    <mat-paginator #paginator
+
+                   [length]="dataSource?.data?.length"
+                   [pageIndex]="0"
+                   [pageSize]="10"
+                   [pageSizeOptions]="[10, 25, 50, 100]">
+    </mat-paginator>
+  </div>
+</div>

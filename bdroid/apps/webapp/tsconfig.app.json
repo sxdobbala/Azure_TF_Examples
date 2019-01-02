@@ -1,0 +1,28 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc/apps/webapp",
+    "types": []
+  },
+  "exclude": [
+    "src/test-setup.ts",
+    "**/*.spec.ts"
+  ],
+  "include": [
+    "**/*.ts"
+  
+    , "../../libs/home/src/index.ts"
+
+    , "../../libs/dashboard/src/index.ts"
+
+    , "../../libs/tenant/src/index.ts"
+
+    , "../../libs/not-found/src/index.ts"
+
+    , "../../libs/experiments/src/index.ts"
+
+    , "../../libs/grid/src/index.ts"
+
+    , "../../libs/ngx-graph/src/index.ts"
+]
+}

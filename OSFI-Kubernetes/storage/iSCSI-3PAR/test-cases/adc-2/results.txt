@@ -1,0 +1,14 @@
+NAME                                    READY     STATUS              RESTARTS   AGE       IP           NODE
+pod-iscsi-chap-lun-1-7948455c78-hnptd   1/1       Running             0          7m        10.244.5.6   lablcactus08.uhclab.lab
+pod-iscsi-chap-lun-1-7948455c78-ttj9h   0/1       ContainerCreating   0          7m        <none>       lablcactus12
+
+kubectl describe po pod-iscsi-chap-lun-1-7948455c78-ttj9h  -n ns-iscsi1
+
+Events:
+  Type     Reason                 Age              From                     Message
+  ----     ------                 ----             ----                     -------
+  Normal   Scheduled              7m               default-scheduler        Successfully assigned pod-iscsi-chap-lun-1-7948455c78-ttj9h to lablcactus12
+  Warning  FailedAttachVolume     7m               attachdetach-controller  Multi-Attach error for volume "iscsi-pv-chap-lun-1" Volume is already used by pod(s) pod-iscsi-chap-lun-1-7948455c78-hnptd
+  Normal   SuccessfulMountVolume  7m               kubelet, lablcactus12    MountVolume.SetUp succeeded for volume "default-token-bhvkt"
+  Warning  FailedMount            1m (x3 over 5m)  kubelet, lablcactus12    Unable to mount volumes for pod "pod-iscsi-chap-lun-1-7948455c78-ttj9h_ns-iscsi1(9893a32c-5c3e-11e8-a7e5-40a8f030092c)": timeout expired waiting for volumes to attach or mount for pod "ns-iscsi1"/"pod-iscsi-chap-lun-1-7948455c78-ttj9h". list of unmounted volumes=[iscsi-vol]. list of unattached volumes=[iscsi-vol default-token-bhvkt]
+

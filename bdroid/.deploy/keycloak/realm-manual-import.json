@@ -1,0 +1,116 @@
+{
+  "realm": "ngx",
+  "enabled": true,
+  "users": [
+    {
+      "username": "ngxadmin",
+      "enabled": true,
+      "firstName" : "ngx",
+      "lastName" : "admin",
+      "email" : "ngxadmin@kube.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "ngxadmin"
+        }
+      ],
+      "realmRoles": [
+        "ROLE_ADMIN"
+      ]
+    },
+    {
+      "username": "sumo",
+      "enabled": true,
+      "firstName" : "sumo",
+      "lastName" : "demo",
+      "email" : "sumo@demo.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "demo"
+        }
+      ],
+      "realmRoles": [
+        "ROLE_USER"
+      ]
+    },
+    {
+      "username": "sumo1",
+      "enabled": true,
+      "firstName" : "sumo1",
+      "lastName" : "demo",
+      "email" : "sumo1@demo.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "demo"
+        }
+      ],
+      "realmRoles": [
+        "ROLE_USER"
+      ]
+    },
+    {
+      "username": "sumo2",
+      "enabled": true,
+      "firstName" : "sumo2",
+      "lastName" : "demo",
+      "email" : "sumo2@demo.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "demo"
+        }
+      ],
+      "realmRoles": [
+        "ROLE_USER"
+      ]
+    },
+    {
+      "username": "sumo3",
+      "enabled": true,
+      "firstName" : "sumo3",
+      "lastName" : "demo",
+      "email" : "sumo3@demo.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "demo"
+        }
+      ],
+      "realmRoles": [
+        "ROLE_USER"
+      ]
+    }
+  ],
+  "roles": {
+    "realm": [
+      {
+        "name": "ROLE_USER",
+        "description": "User privileges"
+      },
+      {
+        "name": "ROLE_ADMIN",
+        "description": "Administrator privileges"
+      }
+    ]
+  },
+  "defaultRoles": [
+    "ROLE_USER"
+  ],
+  "clients": [
+    {
+      "clientId": "cockpit",
+      "enabled": true,
+      "implicitFlowEnabled" : true,
+      "directAccessGrantsEnabled" : true,
+      "publicClient": true,
+      "redirectUris": [
+        "*"
+      ],
+      "webOrigins": [
+        "*"
+      ]
+    }
+  ]
+}

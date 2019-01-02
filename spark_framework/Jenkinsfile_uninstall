@@ -1,0 +1,20 @@
+node {
+  stage('Clone repository') {
+    checkout scm
+  }
+  stage('uninstall spark') {
+    dir('uninstall'){
+    sh 'sh ./sparkUninstall.sh '
+    }
+  }
+  stage('Verify Uninstall') {
+    dir('uninstall'){
+    sh 'sh ./isServiceDown.sh'
+    }
+  }
+stage('Clean Framework from Zookeeper') {
+    dir('uninstall'){
+    sh 'sh ./frameworkCleaner.sh'
+    }
+  }
+}

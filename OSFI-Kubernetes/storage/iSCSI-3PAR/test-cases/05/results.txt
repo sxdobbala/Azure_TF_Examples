@@ -1,0 +1,69 @@
+NAME                       READY     STATUS              RESTARTS   AGE       IP            NODE
+pod-iscsi-chap-lun-1       1/1       Running             0          1m        10.244.4.11   lablcactus13
+pod-iscsi-chap-lun-1-2nd   0/1       ContainerCreating   0          1m        <none>        lablcactus08.uhclab.lab
+--------------------------------------------------------------------------------------------------------------------------
+kubectl describe po pod-iscsi-chap-lun-1-2nd  -n ns-iscsi1
+
+Events:
+  Type     Reason                 Age              From                              Message
+  ----     ------                 ----             ----                              -------
+  Warning  FailedScheduling       2m (x2 over 2m)  default-scheduler                 pod has unbound PersistentVolumeClaims (repeated 3 times)
+  Normal   Scheduled              2m               default-scheduler                 Successfully assigned pod-iscsi-chap-lun-1-2nd to lablcactus08.uhclab.lab
+  Warning  FailedAttachVolume     2m               attachdetach-controller           Multi-Attach error for volume "iscsi-pv-chap-lun-1" Volume is already used by pod(s) pod-iscsi-chap-lun-1
+  Normal   SuccessfulMountVolume  2m               kubelet, lablcactus08.uhclab.lab  MountVolume.SetUp succeeded for volume "default-token-bhvkt"
+  Warning  FailedMount            26s              kubelet, lablcactus08.uhclab.lab  Unable to mount volumes for pod "pod-iscsi-chap-lun-1-2nd_ns-iscsi1(46ad5ed8-5a58-11e8-8e4d-40a8f030092c)": timeout expired waiting for volumes to attach or mount for pod "ns-iscsi1"/"pod-iscsi-chap-lun-1-2nd". list of unmounted volumes=[iscsi-vol]. list of unattached volumes=[iscsi-vol default-token-bhvkt]
+
+--------------------------------------------------------------------------------------------------------------------------
+kubectl delete -f yamls/pod-iscsi-lun-1.yaml
+
+--------------------------------------------------------------------------------------------------------------------------
+NAME                       READY     STATUS              RESTARTS   AGE       IP        NODE
+pod-iscsi-chap-lun-1-2nd   0/1       ContainerCreating   0          5m        <none>    lablcactus08.uhclab.lab
+
+--------------------------------------------------------------------------------------------------------------------------
+NAME                       READY     STATUS    RESTARTS   AGE       IP           NODE
+pod-iscsi-chap-lun-1-2nd   1/1       Running   0          6m        10.244.5.5   lablcactus08.uhclab.lab
+
+--------------------------------------------------------------------------------------------------------------------------
+kubectl describe po pod-iscsi-chap-lun-1-2nd  -n ns-iscsi1
+Events:
+  Type     Reason                  Age              From                              Message
+  ----     ------                  ----             ----                              -------
+  Warning  FailedScheduling        7m (x2 over 7m)  default-scheduler                 pod has unbound PersistentVolumeClaims (repeated 3 times)
+  Normal   Scheduled               7m               default-scheduler                 Successfully assigned pod-iscsi-chap-lun-1-2nd to lablcactus08.uhclab.lab
+  Warning  FailedAttachVolume      7m               attachdetach-controller           Multi-Attach error for volume "iscsi-pv-chap-lun-1" Volume is already used by pod(s) pod-iscsi-chap-lun-1
+  Normal   SuccessfulMountVolume   7m               kubelet, lablcactus08.uhclab.lab  MountVolume.SetUp succeeded for volume "default-token-bhvkt"
+  Warning  FailedMount             3m (x2 over 5m)  kubelet, lablcactus08.uhclab.lab  Unable to mount volumes for pod "pod-iscsi-chap-lun-1-2nd_ns-iscsi1(46ad5ed8-5a58-11e8-8e4d-40a8f030092c)": timeout expired waiting for volumes to attach or mount for pod "ns-iscsi1"/"pod-iscsi-chap-lun-1-2nd". list of unmounted volumes=[iscsi-vol]. list of unattached volumes=[iscsi-vol default-token-bhvkt]
+  Normal   SuccessfulAttachVolume  2m               attachdetach-controller           AttachVolume.Attach succeeded for volume "iscsi-pv-chap-lun-1"
+  Normal   SuccessfulMountVolume   1m               kubelet, lablcactus08.uhclab.lab  MountVolume.SetUp succeeded for volume "iscsi-pv-chap-lun-1"
+  Normal   Pulling                 1m               kubelet, lablcactus08.uhclab.lab  pulling image "busybox"
+  Normal   Pulled                  1m               kubelet, lablcactus08.uhclab.lab  Successfully pulled image "busybox"
+  Normal   Created                 1m               kubelet, lablcactus08.uhclab.lab  Created container
+  Normal   Started                 1m               kubelet, lablcactus08.uhclab.lab  Started container
+
+--------------------------------------------------------------------------------------------------------------------------
+# kubectl exec -it pod-iscsi-chap-lun-1-2nd  -n ns-iscsi1 -- sh
+Error from server: error dialing backend: dial tcp 10.11.182.111:10250: getsockopt: no route to host
+
+--------------------------------------------------------------------------------------------------------------------------
+check the container on lablcactus08.uhclab.lab
+
+ssh lablcactus08.uhclab.lab
+
+root@lablcactus08:/root
+# docker ps | grep iscsi
+4db3b21dd206        busybox@sha256:58ac43b2cc92c687a32c8be6278e50a063579655fe3090125dcb2af0ff9e1a64                       "sleep 1000000"          4 minutes ago       Up 4 minutes                            k8s_busybox-1_pod-iscsi-chap-lun-1-2nd_ns-iscsi1_46ad5ed8-5a58-11e8-8e4d-40a8f030092c_0
+2172b0c52125        k8s.gcr.io/pause-amd64:3.1                                                                            "/pause"                 4 minutes ago       Up 4 minutes                            k8s_POD_pod-iscsi-chap-lun-1-2nd_ns-iscsi1_46ad5ed8-5a58-11e8-8e4d-40a8f030092c_0
+root@lablcactus08:/root
+# docker exec -it 4db3b21dd206 sh
+/ # ls -ltr /data-1/
+lost+found/    lun1           tr.google.com
+/ # ls -ltr /data-1/
+total 20
+drwx------    2 root     root         16384 May 10 13:55 lost+found
+-rw-r--r--    1 root     root             0 May 10 13:56 lun1
+-rw-r--r--    1 root     root          1928 May 18 04:44 tr.google.com
+
+
+--------------------------------------------------------------------------------------------------------------------------
+

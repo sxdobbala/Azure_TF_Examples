@@ -1,0 +1,23 @@
+
+NAME                   READY     STATUS              RESTARTS   AGE       IP            NODE
+pod-iscsi-chap-lun-1   0/1       ContainerCreating   0          4m        <none>        lablcactus08.uhclab.lab
+pod-iscsi-lun-1-2nd    1/1       Running             0          4m        10.244.3.12   lablcactus12
+---------------------------------------------------------------------------------------------------------------------------------
+# kubectl exec -it pod-iscsi-lun-1-2nd  -n ns-iscsi1 -- sh
+/ # ls -ltr /data-01/
+total 20
+drwx------    2 root     root         16384 May 10 13:55 lost+found
+-rw-r--r--    1 root     root             0 May 10 13:56 lun1
+-rw-r--r--    1 root     root          1928 May 18 04:44 tr.google.com
+
+---------------------------------------------------------------------------------------------------------------------------------
+kubectl describe po pod-iscsi-chap-lun-1  -n ns-iscsi1
+Events:
+  Type     Reason                 Age              From                              Message
+  ----     ------                 ----             ----                              -------
+  Warning  FailedScheduling       5m (x2 over 5m)  default-scheduler                 pod has unbound PersistentVolumeClaims (repeated 3 times)
+  Normal   Scheduled              5m               default-scheduler                 Successfully assigned pod-iscsi-chap-lun-1 to lablcactus08.uhclab.lab
+  Warning  FailedAttachVolume     5m               attachdetach-controller           Multi-Attach error for volume "iscsi-pv-chap-lun-1" Volume is already used by pod(s) pod-iscsi-lun-1-2nd
+  Normal   SuccessfulMountVolume  5m               kubelet, lablcactus08.uhclab.lab  MountVolume.SetUp succeeded for volume "default-token-bhvkt"
+  Warning  FailedMount            1m (x2 over 3m)  kubelet, lablcactus08.uhclab.lab  Unable to mount volumes for pod "pod-iscsi-chap-lun-1_ns-iscsi1(e8dc5870-5a5b-11e8-a7e5-40a8f030092c)": timeout expired waiting for volumes to attach or mount for pod "ns-iscsi1"/"pod-iscsi-chap-lun-1". list of unmounted volumes=[iscsi-vol]. list of unattached volumes=[iscsi-vol default-token-bhvkt]
+

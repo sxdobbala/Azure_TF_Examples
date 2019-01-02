@@ -1,0 +1,29 @@
+apiVersion: extensions/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: mapr-kdf-psp
+spec:
+  volumes:
+    - 'configMap'
+    - 'emptyDir'
+    - 'projected'
+    - 'secret'
+    - 'downwardAPI'
+    - 'persistentVolumeClaim'
+    - 'hostPath'
+    - 'flexVolume'
+  allowedHostPaths:
+    - pathPrefix: "/opt"
+    - pathPrefix: "/usr/libexec/kubernetes/kubelet-plugins/volume/exec/"
+    - pathPrefix: "/etc/kubernetes"
+    - pathPrefix: "/etc/localtime"
+  allowedFlexVolumes:
+    - driver: mapr.com/maprfs
+  runAsUser:
+    rule: 'RunAsAny'
+  seLinux:
+    rule: 'RunAsAny'
+  supplementalGroups:
+    rule: 'RunAsAny'
+  fsGroup:
+    rule: 'RunAsAny'

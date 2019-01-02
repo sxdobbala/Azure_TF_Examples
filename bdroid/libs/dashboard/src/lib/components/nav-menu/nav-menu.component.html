@@ -1,0 +1,18 @@
+<mat-toolbar style="background:#ffffff;color:orange">
+  <mat-toolbar-row fxLayout="row" fxLayoutAlign="space-between center">
+    <div fxLayout="row">
+     <span *ngFor="let menu of menus">
+      <ngx-app-menu icon="{{menu.icon}}" title="{{menu.title}}" name="{{menu.name}}"></ngx-app-menu>
+     </span>
+
+      <!--<mat-nav-list *ngFor="let menu of menus">
+      <mat-icon class="mat-icon material-icons" role="img" aria-hidden="true">{{menu.icon}}</mat-icon>
+       <a pageScroll mat-button class="nav-link" fxShow fxHide.lt-md
+          [routerLink]="[menu.link]" matRipple  [routerLinkActiveOptions]="{exact: true}" href="{{menu.link}}" routerLinkActive="{{menu.name}}">
+         {{menu.name}} &nbsp;|
+       </a>
+
+      </mat-nav-list>-->
+    </div>
+  </mat-toolbar-row>
+</mat-toolbar>

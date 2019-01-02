@@ -1,0 +1,55 @@
+{
+  "service": {
+    "name": "elastic-ctc-test",
+    "user": "nobody",
+    "log_level": "INFO",
+    "security": {
+      "transport_encryption": {
+        "enabled": false
+      }
+    }
+  },
+  "marathon-lb": {
+    "port" : 9200
+  },
+  "master_nodes": {
+    "cpus": 1,
+    "mem": 2048,
+    "disk": 2000,
+    "disk_type": "ROOT",
+    "transport_port": 9200,
+    "heap": {
+      "size": 1024
+    }
+  },
+  "data_nodes": {
+    "count": 1,
+    "cpus": 1,
+    "mem": 4096,
+    "disk": 10000,
+    "disk_type": "ROOT",
+    "heap": {
+      "size": 2048
+    }
+  },
+  "ingest_nodes": {
+    "count": 0,
+    "cpus": 0.5,
+    "mem": 2048,
+    "disk": 2000,
+    "disk_type": "ROOT",
+    "heap": {
+      "size": 512
+    }
+  },
+  "coordinator_nodes": {
+    "count": 1,
+    "cpus": 1,
+    "mem": 2048,
+    "disk": 1000,
+    "disk_type": "ROOT",
+    "heap": {
+      "size": 1024
+    }
+  }
+}

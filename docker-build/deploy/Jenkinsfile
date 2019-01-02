@@ -1,0 +1,36 @@
+node {
+    stage('Clone repository') {
+      checkout scm
+    }
+   stage('Build Docker Image') {
+     dir('deploy') { 
+	   
+       sh '''
+           . /etc/profile.d/jenkins.sh
+	   source ../jenkins/jenkins-build.props
+	   docker build -t ${DOCKER_HUB}/${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_VERSION} .
+	   
+	   '''
+     }
+   }
+   // Log in and push image to GitHub
+   stage('Push Docker Image') {
+     dir('deploy') { 
+       withCredentials(
+         [[
+           $class: 'UsernamePasswordMultiBinding',
+           credentialsId: 'non-userid',
+           passwordVariable: 'DOCKERHUB_PASSWORD',
+           usernameVariable: 'DOCKERHUB_USERNAME'
+         ]]
+       ) {
+       sh '''
+                . /etc/profile.d/jenkins.sh
+		source ../jenkins/jenkins-build.props
+		docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD docker.optum.com
+		docker push ${DOCKER_HUB}/${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_VERSION}
+	   '''
+	   }
+     }
+   }
+}

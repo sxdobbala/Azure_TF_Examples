@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-kafka1
+  labels:
+   volume-type: kafka-test
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  iscsi:
+     targetPortal: 10.11.182.196:3260
+     portals: ['10.11.182.197:3260', '10.11.182.212:3260', '10.11.182.213:3260']
+     iqn: iqn.2000-05.com.3pardata:20210002ac01d6dc
+     lun: 4
+     fsType: 'ext4'
+     readOnly: false
+     chapAuthDiscovery: true
+     chapAuthSession: true
+     secretRef:
+        name: chap-secret-otl3par

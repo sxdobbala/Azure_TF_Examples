@@ -1,0 +1,23 @@
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-zk3
+  namespace: mapr-examples
+  labels:
+   volume-type: mapr-zk
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  flexVolume:
+    driver: "mapr.com/maprfs"
+    options:
+      cluster: "datalake-mapr6"
+      volumePath: "/datalake/k8_ses_beta_vol3"
+      cldbHosts: "dbslp1750.uhc.com dbslp1751.uhc.com dbslp1752.uhc.com"
+      securityType: "secure"
+      ticketSecretName: "ses-beta-ticket-secret"
+      ticketSecretNamespace: "mapr-examples"

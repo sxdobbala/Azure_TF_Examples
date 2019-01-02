@@ -1,0 +1,252 @@
+<h1 mat-dialog-title cdkDrag cdkDragHandle  cdkDragRootElement=".cdk-overlay-pane" style="cursor: move">{{title}}</h1>
+
+<form [formGroup]="entityForm" (ngSubmit)="submit()">
+  <mat-dialog-content>
+    <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+      <mat-form-field fxFlex>
+        <input
+          matInput
+          type="text"
+          name="programName"
+          formControlName="programName"
+          placeholder="Program Name"
+          required>
+      </mat-form-field>
+      <mat-form-field fxFlex>
+        <mat-select placeholder="Select an environment" formControlName="environment" required>
+          <mat-option *ngFor="let env of environmentOptions" [value]="env">
+            {{env}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="entityForm.get('environment').hasError('required')">Please choose an environment</mat-error>
+      </mat-form-field>
+      <mat-form-field fxFlex>
+        <input
+          matInput
+          type="text"
+          name="volumeName"
+          formControlName="volumeName"
+          placeholder="Volume Name"
+          required>
+      </mat-form-field>
+    </div>
+    <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+      <mat-form-field fxFlex>
+        <input
+          matInput
+          type="text"
+          name="serviceAccount"
+          formControlName="serviceAccount"
+          placeholder="Service Account"
+          required>
+      </mat-form-field>
+      <mat-form-field fxFlex>
+        <input
+          matInput
+          type="text"
+          name="primaryGroup"
+          formControlName="primaryGroup"
+          placeholder="Primary Group"
+          required>
+      </mat-form-field>
+      <mat-form-field fxFlex>
+        <input
+          matInput
+          type="text"
+          name="maprfsPath"
+          formControlName="maprfsPath"
+          placeholder="Maprfs Path"
+          required>
+      </mat-form-field>
+    </div>
+    <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+      <mat-form-field fxFlex>
+        <input
+          matInput
+          type="text"
+          name="quota"
+          formControlName="quota"
+          placeholder="Quota"
+          >
+      </mat-form-field>
+      <mat-form-field fxFlex>
+        <input
+          matInput
+          type="text"
+          name="queue"
+          formControlName="queue"
+          placeholder="Queue"
+          required>
+      </mat-form-field>
+      <mat-form-field fxFlex>
+        <input
+          matInput
+          type="text"
+          name="globalGroup"
+          formControlName="globalGroup"
+          placeholder="Global Group">
+      </mat-form-field>
+    </div>
+    <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+      <mat-form-field fxFlex>
+        <textarea matInput type="text"
+                  name="dataSummary"
+                  formControlName="dataSummary"
+                  placeholder="Summary Of Data"></textarea>
+      </mat-form-field>
+      <mat-form-field fxFlex>
+        <input
+          matInput
+          type="text"
+          name="gl"
+          formControlName="gl"
+          placeholder="Gl Code"
+          required>
+      </mat-form-field>
+      <mat-form-field fxFlex>
+        <input
+          matInput
+          type="text"
+          name="segment"
+          formControlName="segment"
+          placeholder="Segment"
+          required>
+      </mat-form-field>
+    </div>
+    <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+     <!-- <mat-form-field fxFlex>
+        <input
+          matInput
+          type="text"
+          name="programShortName"
+          formControlName="programShortName"
+          placeholder="Program Short Name"
+          required>
+      </mat-form-field>-->
+      <mat-form-field fxFlex>
+        <input
+          matInput
+          type="text"
+          name="projectNumber"
+          formControlName="projectNumber"
+          placeholder="Project Number">
+      </mat-form-field>
+      <mat-form-field fxFlex>
+        <input
+          matInput
+          type="text"
+          name="businessSponsor"
+          formControlName="businessSponsor"
+          placeholder="Business Sponsor">
+      </mat-form-field>
+    </div>
+    <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+      <mat-form-field fxFlex>
+        <input
+          matInput
+          type="text"
+          name="businessContact"
+          formControlName="businessContact"
+          placeholder="Business Contact"
+          required>
+      </mat-form-field>
+      <mat-form-field fxFlex>
+        <input
+          matInput
+          type="text"
+          name="technicalContact"
+          formControlName="technicalContact"
+          placeholder="Technical Contact"
+          required>
+      </mat-form-field>
+      <mat-form-field fxFlex>
+        <mat-select placeholder="Select a Status" formControlName="status">
+          <mat-option *ngFor="let status of statusOptions" [value]="status">
+            {{status}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="entityForm.get('status').hasError('required')">Please choose a status</mat-error>
+      </mat-form-field>
+    </div>
+
+    <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+      <mat-form-field fxFlex>
+        <input
+          matInput
+          type="text"
+          name="tenantType"
+          formControlName="tenantType"
+          placeholder="Tenant Type">
+      </mat-form-field>
+      <mat-form-field fxFlex>
+        <input
+          matInput
+          type="text"
+          name="description"
+          formControlName="description"
+          placeholder="Description"
+          required>
+      </mat-form-field>
+      <mat-form-field fxFlex>
+        <input
+          matInput
+          type="text"
+          name="serviceDeliveryDate"
+          formControlName="serviceDeliveryDate"
+          placeholder="Service Delivery Date">
+      </mat-form-field>
+    </div>
+    <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+      <mat-form-field fxFlex>
+        <input
+          matInput
+          type="text"
+          name="serviceRequestNumber"
+          formControlName="serviceRequestNumber"
+          placeholder="Service Request Number">
+      </mat-form-field>
+      <mat-form-field fxFlex>
+        <input
+          matInput
+          type="text"
+          name="clientAcceptance"
+          formControlName="clientAcceptance"
+          placeholder="Client Acceptance">
+      </mat-form-field>
+      <mat-form-field fxFlex>
+        <input
+          matInput
+          type="text"
+          name="classification"
+          formControlName="classification"
+          placeholder="Classification"
+          required>
+      </mat-form-field>
+    </div>
+    <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap.gt-sm="24px">
+      <mat-form-field fxFlex>
+        <input
+          matInput
+          type="text"
+          name="busAppSearchCode"
+          formControlName="busAppSearchCode"
+          placeholder="Business App Search Code"
+          required>
+      </mat-form-field>
+      <div>
+        Are you a Data Lake User? <br/>
+        <mat-radio-group formControlName="dataLakeUser">
+          <mat-radio-button value="Yes">Yes</mat-radio-button> &nbsp;&nbsp;
+          <mat-radio-button value="No">No</mat-radio-button>
+        </mat-radio-group>
+
+      </div>
+
+    </div>
+
+  </mat-dialog-content>
+  <mat-dialog-actions fxLayout="row" fxLayoutAlign="space-between center">
+    <button mat-button color="warn" type="button" [mat-dialog-close]="false">Cancel</button>
+    <button mat-raised-button color="primary" [disabled]="entityForm.invalid">Save</button>
+  </mat-dialog-actions>
+</form>

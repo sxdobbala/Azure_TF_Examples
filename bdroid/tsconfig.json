@@ -1,0 +1,118 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "module": "es2015",
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es5",
+    "resolveJsonModule": true,
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2017",
+      "dom",
+      "esnext.array"
+    ],
+    "paths": {
+      "@env/*": [
+        "apps/webapp/src/environments/*"
+      ],
+      "@bdroid/home": [
+        "libs/home/src/index.ts"
+      ],
+      "@bdroid/dashboard": [
+        "libs/dashboard/src/index.ts"
+      ],
+      "@bdroid/experiments": [
+        "libs/experiments/src/index.ts"
+      ],
+      "@bdroid/grid": [
+        "libs/grid/src/index.ts"
+      ],
+      "@bdroid/animations": [
+        "libs/animations/src/index.ts"
+      ],
+      "@bdroid/tree": [
+        "libs/tree/src/index.ts"
+      ],
+      "@bdroid/utils": [
+        "libs/utils/src/index.ts"
+      ],
+      "@bdroid/models": [
+        "libs/models/src/index.ts"
+      ],
+      "@bdroid/core": [
+        "libs/core/src/index.ts"
+      ],
+      "@bdroid/material": [
+        "libs/material/src/index.ts"
+      ],
+      "@bdroid/shared": [
+        "libs/shared/src/index.ts"
+      ],
+      "@bdroid/app-confirm": [
+        "libs/app-confirm/src/index.ts"
+      ],
+      "@bdroid/draggable": [
+        "libs/draggable/src/index.ts"
+      ],
+      "@bdroid/breadcrumbs": [
+        "libs/breadcrumbs/src/index.ts"
+      ],
+      "@bdroid/scroll-to-top": [
+        "libs/scroll-to-top/src/index.ts"
+      ],
+      "@bdroid/scrollbar": [
+        "libs/scrollbar/src/index.ts"
+      ],
+      "@bdroid/theme-picker": [
+        "libs/theme-picker/src/index.ts"
+      ],
+      "@bdroid/notifications": [
+        "libs/notifications/src/index.ts"
+      ],
+      "@bdroid/svg-viewer": [
+        "libs/svg-viewer/src/index.ts"
+      ],
+      "@bdroid/ngx-utils": [
+        "libs/ngx-utils/src/index.ts"
+      ],
+      "@bdroid/toolbar": [
+        "libs/toolbar/src/index.ts"
+      ],
+      "@bdroid/sidenav": [
+        "libs/sidenav/src/index.ts"
+      ],
+      "@bdroid/auth": [
+        "libs/auth/src/index.ts"
+      ],
+      "@bdroid/navigator": [
+        "libs/navigator/src/index.ts"
+      ],
+      "@bdroid/quickpanel": [
+        "libs/quickpanel/src/index.ts"
+      ],
+      "@bdroid/not-found": [
+        "libs/not-found/src/index.ts"
+      ],
+      "@bdroid/tenant": [
+        "libs/tenant/src/index.ts"
+      ],
+      "@bdroid/ngx-graph": [
+        "libs/ngx-graph/src/index.ts"
+      ]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "tmp",
+    "dist/**/*",
+    "coverage/**/*",
+    "tools/**/_*files/**/*"
+  ]
+}

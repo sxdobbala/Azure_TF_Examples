@@ -1,0 +1,77 @@
+<div id="home-content">
+<mat-card [@fadeAnimation]="animationTrigger$ | async" style="height:65vh; display: grid; margin:7px 0px 7px 0px !important;">
+   <mat-card-header>
+    <mat-card-title><h3>Selected Tenant Master</h3></mat-card-title>
+  </mat-card-header>
+  <mat-divider></mat-divider>
+  <mat-card-content>
+
+    <main>
+      <!--<div class="dark chart-col">
+          <ngx-graph *ngIf="graph" #graphEl class="chart-container" [enableZoom]="enableZoom"
+                     [autoZoom]="autoZoom" [panOnZoom]="panOnZoom"
+                     [panOffsetX]="panOffsetX" [panOffsetY]="panOffsetY" [zoomLevel]="zoomLevel"
+                     [autoCenter]="autoCenter"
+                     [legend]="showLegend"
+                     [links]="graph.edges" (legendLabelClick)="onLegendLabelClick($event)" [nodes]="graph.nodes"
+                     [scheme]="colorScheme"
+                     [curve]="curve"
+                     [update$]="update$" [zoomToFit$]="zoomToFit$" [center$]="center$" (select)="select($event)">
+
+
+            <ng-template #defsTemplate>
+              <svg:marker id="arrow" viewBox="0 -5 10 10" refX="8" refY="0" markerWidth="4" markerHeight="4"
+                          orient="auto">
+                <svg:path d="M0,-5L10,0L0,5" class="arrow-head"/>
+              </svg:marker>
+            </ng-template>
+
+
+            <ng-template #nodeTemplate let-node>
+              <svg:g class="node"
+                     ngx-tooltip
+                     [tooltipPlacement]="'top'"
+                     [tooltipType]="'tooltip'"
+                     [tooltipTitle]="node.detail">
+                <svg:rect [attr.width]="node.width" [attr.height]="node.height"
+                          [attr.fill]="node.color || node.options.color" />
+                <svg:text alignment-baseline="central" [attr.x]="10"
+                          [attr.y]="node.height / 2">{{node.data.value}}</svg:text>
+              </svg:g>
+            </ng-template>
+
+            <ng-template #linkTemplate let-link>
+              <svg:g class="edge">
+                <svg:path
+                  class="line"
+                  stroke-width="2"
+                  marker-end="url(#arrow)">
+                </svg:path>
+                <svg:text class="edge-label" text-anchor="middle">
+                  <textPath
+                    class="text-path"
+                    [attr.href]="'#' + link.id"
+                    [style.dominant-baseline]="link.dominantBaseline"
+                    startOffset="50%">
+                    {{link.label}}
+                  </textPath>
+                </svg:text>
+              </svg:g>
+            </ng-template>
+          </ngx-graph>
+        </div>-->
+
+        <mat-list role="list">
+          <mat-list-item *ngFor="let entry of tenantMaster | keyvalue" role="listitem">
+            <div>
+              <span>{{entry.key}}：</span><span>{{ entry.value | json }}</span>
+            </div>
+          </mat-list-item>
+        </mat-list>
+
+    </main>
+
+  </mat-card-content>
+</mat-card>
+
+</div>

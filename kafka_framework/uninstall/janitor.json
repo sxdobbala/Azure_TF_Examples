@@ -1,0 +1,15 @@
+{
+  "id": "janitor",
+  "cmd": "/janitor.py -r test-kafka-001-role -p test-kafka-001-principal -z dcos-service-test-kafka-001",
+  "cpus": 1,
+  "mem": 128,
+  "disk": 1,
+  "instances": 1,
+  "container": {
+    "docker": {
+      "image": "mesosphere/janitor:latest",
+      "network": "HOST"
+    },
+    "type": "DOCKER"
+  }
+}

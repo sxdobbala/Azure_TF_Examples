@@ -1,0 +1,12 @@
+node {
+withCredentials([string(credentialsId: 'TOKEN', variable: 'TOKEN')]){
+  stage('Clone Repository') {
+    checkout scm
+  }
+  stage('Deploy Nginx') {
+    dir('scripts'){
+    sh 'sh ./launchDeployment.sh'
+    }
+  }
+}
+}

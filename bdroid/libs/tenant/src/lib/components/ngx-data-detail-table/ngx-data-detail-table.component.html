@@ -1,0 +1,30 @@
+<div class="mat-elevation-z8">
+  <mat-accordion>
+    <mat-expansion-panel  *ngFor="let node of _nodes; let i = index" (opened)="panelOpenState = true"
+                          (closed)="panelOpenState = false">
+      <mat-expansion-panel-header>
+        <mat-panel-title style="color:orange;font-size:12px;">
+          {{node.title}}
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <mat-table #table [dataSource]="dataSource[i]" aria-label="Elements">
+        <ng-container [matColumnDef]="column.property" *ngFor="let column of node.columns; let i = index">
+          <mat-header-cell *matHeaderCellDef>{{column.header}}</mat-header-cell>
+          <mat-cell *matCellDef="let row">
+
+            <span>{{column.displayFn(row)}}</span>
+
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="_displayedColumns[i]; sticky: true"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: _displayedColumns[i];"></mat-row>
+      </mat-table>
+
+
+    </mat-expansion-panel>
+
+  </mat-accordion>
+
+</div>
