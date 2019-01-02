@@ -1,4 +1,0 @@
-IMAGE_NAME='cd-demo-app'
-IMAGE_VERSION='dash-0.21.1'
-DOCKER_USER='osfi_admin'
-DOCKER_HUB='docker.optum.com'
