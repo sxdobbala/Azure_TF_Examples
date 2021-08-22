@@ -1,0 +1,124 @@
+### YamlMime:Hub
+
+title: DevOps @ Provider
+summary: Discover all there is to learn about developing, shipping, and running software products at Provider.
+description: Discover all there is to learn about developing, shipping, and running software products at Provider.
+
+metadata:
+  title: DevOps @ Provider
+  description: Discover all there is to learn about developing, shipping, and running software products at Provider.
+  services: azure
+  topic: hub
+  author: bashey
+  date: 06/11/2021
+
+categories:
+  - name: All
+    slug: all
+  - name: Featured
+    slug: featured
+  - name: CI\CD
+    slug: cicd
+  - name: Common
+    slug: common
+  - name: Connectivity
+    slug: connectivity
+  - name: Email
+    slug: email
+  - name: Observability
+    slug: observability
+
+directory:
+  # Card
+  - title: Core Connectivity
+    summary: VPN or dedicated connections to UHG's core network.
+    categorySlugs:
+      - all
+      - connectivity
+      - featured
+    url: /docs/devops/services/transit-hub/index.html
+    urlTarget: _blank
+    authorTeam: devops
+    authorTeamUrl: https://confluence.optum.com/display/FICSDO
+    resourceType: managed-service
+  # Card
+  - title: Email Relay
+    summary: Optum integrated email relay. Supports distro groups.
+    categorySlugs:
+      - all
+      - email
+    url: /docs/devops/services/cloud-email-relay/overview.html
+    urlTarget: _self
+    authorTeam: devops
+    authorTeamUrl: https://confluence.optum.com/display/FICSDO
+    resourceType: managed-service
+  # Card
+  - title: Optum Tags
+    summary: A repository containing a default set of tags required for all Provider resources in any cloud.
+    categorySlugs:
+      - all
+      - observability
+    url: https://github.optum.com/Dojo360/optum-tags
+    urlTarget: _blank
+    authorTeam: Dojo
+    authorTeamUrl: https://dojo.provider.engineering
+    resourceType: terraform
+  # Card
+  - title: Splunk Core
+    summary: Logging and analysis using Splunk Core.
+    categorySlugs:
+      - all
+      - featured
+      - observability
+    url: /docs/devops/observability/index.html
+    urlTarget: _blank
+    authorTeam: devops
+    authorTeamUrl: https://confluence.optum.com/display/FICSDO
+    resourceType: managed-service
+  # Card
+  - title: Splunk Observability
+    summary: Logging, Monitoring, APM, RUM, and Synthetics.
+    categorySlugs:
+      - all
+      - featured
+      - observability
+    url: /docs/devops/observability/index.html
+    urlTarget: _blank
+    authorTeam: devops
+    authorTeamUrl: https://confluence.optum.com/display/FICSDO
+    resourceType: managed-service
+  # Card
+  - title: Terraform JPAC
+    summary: Jenkins Pipeline as Code for deploying Terraform.
+    categorySlugs:
+      - all
+      - cicd
+    url: https://github.optum.com/Dojo360/dojo-template-terraform-pipeline
+    urlTarget: _blank
+    authorTeam: Dojo
+    authorTeamUrl: https://dojo.provider.engineering
+    resourceType: jenkins
+  # Card
+  - title: Terraform Profile Template
+    summary: Template that creates the folder structure and files for Dojo Terraform modules/profiles
+    categorySlugs:
+      - all
+      - common
+    url: https://github.optum.com/Dojo360/dojo-template-terraform-profiles
+    urlTarget: _blank
+    authorTeam: Dojo
+    authorTeamUrl: https://dojo.provider.engineering
+    resourceType: terraform
+  # Card
+  - title: Virtual Private Network (VPN)
+    summary: VPN (Site-to-Site) is handled by the Transit Hub.
+    categorySlugs:
+      - all
+      - connectivity
+      - featured
+    url: /docs/devops/services/transit-hub/index.html
+    urlTarget: _blank
+    authorTeam: devops
+    authorTeamUrl: https://confluence.optum.com/display/FICSDO
+    resourceType: managed-service
+  

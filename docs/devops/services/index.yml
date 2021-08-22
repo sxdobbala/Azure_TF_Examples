@@ -1,0 +1,88 @@
+### YamlMime:Hub
+
+title: Provider Services
+summary: Various services brought to you by the Provider Cloud & DevOps Enablement teams.
+
+metadata:
+  title: Provider Services
+  description: Various services brought to you by the Provider Cloud & DevOps Enablement teams.
+  services: azure
+  topic: hub
+  author: bashey
+  date: 05/29/2021
+
+categories:
+  - name: All
+    slug: all
+  - name: Featured
+    slug: featured
+  - name: CI\CD
+    slug: cicd
+  - name: Datacenter in the Cloud
+    slug: datacenter-in-the-cloud
+  - name: DevOps
+    slug: devops
+  - name: Observability
+    slug: observability
+  - name: Provider Engineering
+    slug: provider-engineering
+  - name: Network
+    slug: network
+
+directory:
+  # Card
+  - title: DevOps Enablement Wiki
+    summary: Resources to support DevOps at Provider
+    categorySlugs:
+      - all
+      - devops
+    url: https://confluence.optum.com/display/FICSDO/Provider+DevOps+Enablement
+    urlTarget: _blank
+    authorTeam: devops
+    authorTeamUrl: https://confluence.optum.com/display/FICSDO/Provider+DevOps+Enablement
+    resourceType: confluence
+  # Card
+  - title: Cloud Email Relay
+    summary: Optum integrated email relay for all clouds
+    categorySlugs:
+      - all
+      - datacenter-in-the-cloud
+    url: cloud-email-relay/overview.md
+    urlTarget: _self
+    authorTeam: devops
+    authorTeamUrl: https://confluence.optum.com/display/FICSDO/Provider+DevOps+Enablement
+    resourceType: devops-service
+  # Card
+  - title: Integration Hub
+    summary: Managed data center service in Azure
+    categorySlugs:
+      - all
+      - datacenter-in-the-cloud
+    url: integration-hub/index.yml
+    urlTarget: _self
+    authorTeam: devops
+    authorTeamUrl: https://confluence.optum.com/display/FICSDO/Provider+DevOps+Enablement
+    resourceType: devops-service
+  # Card
+  - title: Provider Engineering Wiki
+    summary: Resources to support Provider Engineering
+    categorySlugs:
+      - all
+      - featured
+      - provider-engineering      
+    url: https://confluence.optum.com/display/proveng
+    urlTarget: _blank
+    authorTeam: proveng
+    authorTeamUrl: https://confluence.optum.com/display/proveng
+    resourceType: confluence
+  # Card
+  - title: Transit Hub
+    summary: Regional VWan + Site-to-Site VPN
+    categorySlugs:
+      - all
+      - network
+    url: transit-hub/index.yml
+    urlTarget: _self
+    authorTeam: devops
+    authorTeamUrl: https://confluence.optum.com/display/FICSDO/Provider+DevOps+Enablement
+    resourceType: devops-service

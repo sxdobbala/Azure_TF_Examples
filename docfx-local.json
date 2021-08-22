@@ -1,0 +1,84 @@
+{
+  "build": {
+    "content": [
+      {
+        "src": "dojo",
+        "dest": ".",
+        "files": [
+          "**/*.md",
+          "**/*.yml",
+          "staticwebapp.config.json"
+        ],
+        "exclude": [
+          "**/includes/**",
+          "**/obj/**",
+          "**/bower_components/**",
+          "**/node_modules/**",
+          "**/.git/**"
+        ]
+      }
+    ],
+    "resource": [
+      {
+        "src": "dojo",
+        "dest": ".",
+        "files": [
+          "**/*.gif",
+          "**/*.jpeg",
+          "**/*.jpg",
+          "**/*.png",
+          "**/*.svg",
+          "**/*.pdf",
+          "**/*.docx",
+          "**/*.xlsx",
+          "**/*.pptx"
+        ],
+        "exclude": [
+          "iot-edge/**",
+          "**/_themes/**",
+          "**/obj/**"
+        ]
+      },
+      {
+        "src": null,
+        "dest": null,
+        "files": [
+          "includes/**/*.gif",
+          "includes/**/*.jpeg",
+          "includes/**/*.jpg",
+          "includes/**/*.png",
+          "includes/**/*.svg",
+          "includes/**/*.pdf",
+          "includes/**/*.docx",
+          "includes/**/*.xlsx",
+          "includes/**/*.pptx"
+        ],
+        "exclude": [
+          "**/_themes/**",
+          "**/obj/**"
+        ]
+      }
+    ],
+    "dest": "_site",
+    "globalMetadata": {
+      "_appTitle": "Dojo",
+      "_disableContribution": "",
+      "_gitContribute": {
+        "repo": "https://github.optum.com/Dojo360/dojo-docs",
+        "branch": "master"
+      },
+      "_searchApiKey": "1E7E8E9C7D80F1F0AAFD09D48B0DB512"
+    },
+    "globalMetadataFiles": [],
+    "fileMetadataFiles": [],
+    "template": [
+      "../dojo-docs-tmpl/"
+    ],
+    "postProcessors": [],
+    "markdownEngineName": "markdig",
+    "noLangKeyword": false,
+    "keepFileLink": false,
+    "cleanupCacheHistory": false,
+    "disableGitFeatures": false
+  }
+}

@@ -1,0 +1,258 @@
+### YamlMime:Hub
+
+title: Optum Communities
+summary: Browse the various communities helping with software engineering at Optum.
+description: Browse the various communities helping with software engineering at Optum..
+
+metadata:
+  title: Optum Communities
+  description: Browse the various communities helping with software engineering at Optum.
+  services: all
+  topic: hub
+  author: bashey
+  date: 05/29/2021
+
+categories:
+  - name: All
+    slug: all
+  - name: Featured
+    slug: featured
+  - name: Architecture
+    slug: architecture
+  - name: Branding \ Design
+    slug: branding-design
+  - name: CI\CD
+    slug: ci-cd
+  - name: Cloud
+    slug: cloud
+  - name: Infrastructure
+    slug: infrastructure
+  - name: ITSM
+    slug: itsm
+  - name: Provider
+    slug: provider
+  - name: Security
+    slug: security
+  - name: Support
+    slug: support
+
+directory:
+  # Card
+  - title: Artifactory
+    summary: UHG's artifact repository and package server
+    categorySlugs:
+      - all
+      - ci-cd
+    url: https://repo1.optum.com
+    urlTarget: _blank
+    authorTeam: CDE
+    authorTeamUrl: https://cde.optum.com
+    resourceType: optum
+  # Card
+  - title: Common UX
+    summary: Guidelines and libraries to create a unified digital experience
+    categorySlugs:
+      - all
+      - branding-design
+    url: https://uhgazure.sharepoint.com/sites/common-ux
+    urlTarget: _blank
+    authorTeam: Common UX
+    authorTeamUrl: https://uhgazure.sharepoint.com/sites/common-ux
+    resourceType: optum
+  # Card
+  - title: Continuous Delivery Enablement
+    summary: CICD at Optum
+    categorySlugs:
+      - all
+      - ci-cd
+    url: https://cde.optum.com
+    urlTarget: _blank
+    authorTeam: CDE
+    authorTeamUrl: https://cde.optum.com
+    resourceType: optum
+  # Card
+  - title: EGRC
+    summary: UHG policy and compliance management 
+    categorySlugs:
+      - all
+      - featured
+      - security
+    url: https://egrc.uhc.com
+    urlTarget: _blank
+    authorTeam: EIS
+    authorTeamUrl: https://teams.microsoft.com/l/channel/19%3a09eece41a1f44831b6581c6afc969309%40thread.tacv2/General?groupId=bfa0a96e-5bde-4488-8877-5fbd610697b3&tenantId=db05faca-c82a-4b9d-b9c5-0f64b6755421
+    resourceType: optum
+  # Card
+  - title: GitHub
+    summary: Source Control at Optum
+    categorySlugs:
+      - all
+      - featured
+      - ci-cd
+    url: https://github.optum.com
+    urlTarget: _blank
+    authorTeam: CDE
+    authorTeamUrl: https://cde.optum.com
+    resourceType: optum
+  # Card
+  - title: Healthcare Cloud (HCC)
+    summary: The team that owns the public cloud tenants at Optum.
+    categorySlugs:
+      - all
+      - cloud
+    url: https://cloud.optum.com
+    urlTarget: _blank
+    authorTeam: HCC
+    authorTeamUrl: https://teams.microsoft.com/l/channel/19%3a8474d5c8c8e4494e904593cf28c3d479%40thread.tacv2/General?groupId=bfb6261c-9d2b-412a-88ae-2d04b5871ae0&tenantId=db05faca-c82a-4b9d-b9c5-0f64b6755421
+    resourceType: optum
+  # Card
+  - title: Heimdall
+    summary: App security posture at a glance
+    categorySlugs:
+      - all
+      - featured
+      - security
+    url: https://heimdall.optum.com
+    urlTarget: _blank
+    authorTeam: Heimdall
+    authorTeamUrl: https://teams.microsoft.com/l/channel/19%3afe4e97fa346a48c68d75cdb8a0d09c45%40thread.tacv2/General?groupId=789d5ec4-7edc-4e65-a4f7-1526bcb8aae3&tenantId=db05faca-c82a-4b9d-b9c5-0f64b6755421
+    resourceType: optum
+  # Card
+  - title: Micro-Interaction Icons
+    summary: Optum micro-interaction icons for utility purposes
+    categorySlugs:
+      - all
+      - branding-design
+    url: https://dpl.myoptum.com/web/components/icons
+    urlTarget: _blank
+    authorTeam: UHC Brand
+    authorTeamUrl: https://hub.uhg.com/sites/hub/UnitedHealthcare/Resources/Brand-Resources/Pages/Home.aspx
+    resourceType: optum
+  # Card
+  - title: Jenkins Build Server Request
+    summary: Semi-managed Jenkins instances.
+    categorySlugs:
+      - all
+      - ci-cd
+    url: https://tech.optum.com/products/jenkins
+    urlTarget: _blank
+    authorTeam: CDE
+    authorTeamUrl: https://gpl.optum.com
+    resourceType: optum
+  # Card
+  - title: Jenkins Global Pipeline Library
+    summary: Common JPAC used across Optum
+    categorySlugs:
+      - all
+      - ci-cd
+    url: https://github.optum.com/jenkins-pipelines/global-pipeline-library
+    urlTarget: _blank
+    authorTeam: CDE
+    authorTeamUrl: https://gpl.optum.com
+    resourceType: optum
+  # Card
+  - title: Optum Brand Resources
+    summary: Branding guidelines for Optum Content
+    categorySlugs:
+      - all
+      - featured
+      - branding-design
+    url: https://brand.optum.com/login
+    urlTarget: _blank
+    authorTeam: Optum Brand
+    authorTeamUrl: https://brand.optum.com/helpdesk
+    resourceType: optum
+  # Card
+  - title: Optum Design Pattern Library (DPL)
+    summary: Branding guidelines for Optum Content
+    categorySlugs:
+      - all
+      - branding-design
+    url: https://dpl.optum.com
+    urlTarget: _blank
+    authorTeam: Optum Brand
+    authorTeamUrl: https://brand.optum.com/helpdesk
+    resourceType: optum
+  # Card
+  - title: Optum Engineer
+    summary: Indexes all micro-sites at Optum.
+    categorySlugs:
+      - all
+      - featured
+    url: https://optumengineer.com
+    urlTarget: _blank
+    authorTeam: OE
+    authorTeamUrl: https://teams.microsoft.com/l/team/19%3a7534f6c041e242d6ba079caaf726b533%40thread.tacv2/conversations?groupId=cc8a9e2a-1389-4a2a-ab2e-4ab3c5388d2a&tenantId=db05faca-c82a-4b9d-b9c5-0f64b6755421
+    resourceType: optum
+  # Card
+  - title: Provider Engineering Wiki
+    summary: Main wiki site for Provider Engineering
+    categorySlugs:
+      - all
+      - featured
+      - provider
+    url: https://confluence.optum.com/display/proveng
+    urlTarget: _blank
+    authorTeam: PE
+    authorTeamUrl: https://teams.microsoft.com/l/channel/19%3a91739e845a594ee8abec483500408aaf%40thread.tacv2/General?groupId=0c33f636-8b2b-4a45-92c0-a84df8a9a1af&tenantId=db05faca-c82a-4b9d-b9c5-0f64b6755421
+    resourceType: confluence
+  # Card
+  - title: SONAR
+    summary: Code quality tool at Optum.
+    categorySlugs:
+      - all
+      - ci-cd
+    url: https://sonar.optum.com
+    urlTarget: _blank
+    authorTeam: CDE
+    authorTeamUrl: https://cde.optum.com
+    resourceType: optum
+  # Card
+  - title: Service Now Request Center
+    summary: Ticketing system for all of optum.
+    categorySlugs:
+      - all
+      - itsm
+      - support
+    url: https://optum.service-now.com/itss2
+    urlTarget: _blank
+    authorTeam: Support
+    authorTeamUrl: https://optum.service-now.com/itss2
+    resourceType: optum
+  # Card
+  - title: Tech Hub
+    summary: Infrastructure services at UHG
+    categorySlugs:
+      - all
+      - featured
+      - infrastructure
+    url: https://tech.optum.com
+    urlTarget: _blank
+    authorTeam: OE
+    authorTeamUrl: https://teams.microsoft.com/l/channel/19%3a74f0c5ecb2e044a9802e34bba65a8163%40thread.tacv2/General?groupId=087d0256-7c49-4fc9-bc3b-161c06399c81&tenantId=db05faca-c82a-4b9d-b9c5-0f64b6755421
+    resourceType: optum
+  # Card
+  - title: Tech Landscape (PADU)
+    summary: Technology assessment at UHG
+    categorySlugs:
+      - all
+      - featured
+      - architecture
+      - itsm
+    url: https://techlandscape.optum.com
+    urlTarget: _blank
+    authorTeam: EA
+    authorTeamUrl: https://techpadu.uhg.com/PADU/padu/
+    resourceType: optum
+  # Card
+  - title: Vanguard
+    summary: Optum-wide cloud coaching and enablement services
+    categorySlugs:
+      - all
+      - featured
+      - cloud
+    url: https://vangaurd.optum.com
+    urlTarget: _blank
+    authorTeam: vanguard
+    authorTeamUrl: https://teams.microsoft.com/l/channel/19%3a8474d5c8c8e4494e904593cf28c3d479%40thread.tacv2/General?groupId=bfb6261c-9d2b-412a-88ae-2d04b5871ae0&tenantId=db05faca-c82a-4b9d-b9c5-0f64b6755421
+    resourceType: vanguard

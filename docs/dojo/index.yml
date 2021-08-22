@@ -1,0 +1,48 @@
+### YamlMime:LandingPage
+
+title: About the Dojo
+summary: Learn how the Dojo works including behind the scenes looks at what it takes to service 30 products and 1000s of developers.
+description: Learn how the Dojo works including behind the scenes looks at what it takes to service 30 products and 1000s of developers.
+
+metadata:
+  title: About the Dojo
+  description: Learn how the Dojo works including behind the scenes looks at what it takes to service 30 products and 1000s of developers.
+  ms.topic: landing-page
+  ms.service: dojo-service
+  ms.date: 08/06/2020
+
+# -- supported linkListTypes
+# architecture | concept | deploy | download | get-started | how-to-guide | learn | overview | quickstart | reference | tutorial | whats-new
+
+landingContent:
+  - title: Contribute
+    linkLists:
+      - linkListType: how-to-guide
+        links:
+          - text: Contributor's Guide
+            url: contribute-content.html
+            target: _self
+          - text: Working Locally
+            url: working-locally.html
+            target: _self
+      - linkListType: learn
+        links:
+          - text: Markdown Getting Started
+            url: https://www.markdownguide.org/getting-started/
+            target: _blank
+          - text: Markdown Basic Syntax
+            url: https://www.markdownguide.org/basic-syntax/
+            target: _blank
+          - text: Markdown Extended Syntax
+            url: https://www.markdownguide.org/extended-syntax/#tables
+            target: _blank
+  - title: Concepts
+    linkLists:
+      - linkListType: concept
+        links:
+          - text: Dojo Content Hierarchy
+            url: content-hierarchy.html
+            target: _self
+          - text: Dojo Content Types
+            url: content-types.html
+            target: _self

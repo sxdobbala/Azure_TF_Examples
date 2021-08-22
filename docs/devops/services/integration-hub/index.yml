@@ -1,0 +1,21 @@
+### YamlMime:LandingPage
+
+title: Integration Hub
+summary: The Integration Hub provides managed data center capabilities in Azure including traditional domain authentication and group policy management.
+
+metadata:
+  title: Integration Hub
+  description: The Integration Hub provides  managed data center capabilities in Azure including traditional domain authentication and group policy management.
+  services: azure
+  topic: hub
+  author: bashey
+  date: 05/29/2021
+
+landingContent:
+- title: Concepts
+  linkLists:
+    - linkListType: overview
+      links:
+        - text: Integration Hub Overview
+          url: overview.html
+          target: _self

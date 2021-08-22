@@ -1,0 +1,10 @@
+items:
+  - name: DevOps
+    href: index.yml
+  - name: CICD
+    href: cicd/toc.yml
+  - name: Observability
+    href: observability/toc.yml
+    topicHref: observability/index.yml
+  - name: Services
+    href: services/toc.yml

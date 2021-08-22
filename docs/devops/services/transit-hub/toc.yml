@@ -1,0 +1,20 @@
+- name: Overview
+  items:
+  - name: Transit Hub Overview
+    href: overview.md
+- name: Getting started
+  items:
+  - name: Request Firewall Change
+    href: how-to-change-firewall-policy.md
+  - name: Request IP Ranges
+    href: how-to-request-ip-space.md    
+  - name: Request or Change a VPN
+    href: how-to-request-vpn.md
+- name: Architecture
+  items:
+  - name: Firewalls
+    href: architecture-firewalls.md
+  - name: VPN
+    href: architecture-vpn.md
+  - name: Virtual WAN
+    href: architecture-virtual-wan.md

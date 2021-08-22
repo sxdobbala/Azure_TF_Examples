@@ -1,0 +1,49 @@
+### YamlMime:LandingPage
+
+title: Azure @Provider
+summary: Discover how we have leveraged Azure as Provider's preferred cloud platform.
+description: Discover how we have leveraged Azure as Provider's preferred cloud platform.
+
+metadata:
+  title: Azure @Provider
+  description: Discover how we have leveraged Azure as Provider's preferred cloud platform.
+  ms.topic: landing-page
+  ms.service: dojo-service
+  ms.date: 08/06/2020
+
+landingContent:
+  - title: Planning
+    linkLists:
+      - linkListType: get-started
+        links:
+          - text: Cloud Migration Planning Part 1
+            url: planning-a-cloud-migration-part1.html
+            target: _self
+          - text: Cloud Migration Planning Part 2
+            url: planning-a-cloud-migration-part2.html
+            target: _self
+          - text: Cost Estimation
+            url: cost-estimation-and-management.html
+            target: _self
+  - title: Database
+    linkLists:
+      - linkListType: how-to-guide
+        links:
+          - text: Using the Azure Database Migration Service
+            url: database/azure-database-migration-service/how-to-use-adms.html
+            target: _self
+          - text: Connect with a Service Principal
+            url: database/sql-database/how-to-connect-with-service-principal.html
+            target: _self
+          - text: Onboarding with Power BI
+            url: database/power-bi/how-to-onboard-power-bi.html
+            target: _self   
+  - title: Network architecture
+    linkLists:
+      - linkListType: reference
+        links:
+          - text: Load Balancing Decision Tree
+            url: network/load-balancing-decision-tree.html
+            target: _self
+          - text: Secure Transfer w/ECG
+            url: network/secure-transfer.html

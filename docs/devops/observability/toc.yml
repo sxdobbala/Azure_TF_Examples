@@ -1,0 +1,30 @@
+- name: Overview
+  items:
+  - name: Basic Concepts
+    href: observability-concepts.md
+  - name: Policies and Service Levels
+    href: policies.md
+- name: Get started
+  items:
+    - name: Access Splunk Core
+      href: how-to-request-access-to-splunk-core.md
+    - name: Access Splunk Observability
+      href: how-to-request-access-to-observability.md
+    - name: Access Splunk On-Call
+      href: how-to-request-access-to-splunk-oncall.md
+- name: Splunk Observability
+  items:
+    - name: Agents and VMs
+      href: how-to-install-observability-agent.md
+    - name: Dashboards
+      items:
+      - name: Builtin Dashboards
+        href: observability-builtin-dashboards.md
+      - name: Mirroring Dashboards
+        href: how-to-mirror-observability-dashboard.md
+    - name: Detectors
+      href: how-to-add-an-observability-detector.md
+    - name: Observability in Dojo Modules
+      href: observability-in-dojo-modules.md
+    - name: Tokens
+      href: how-to-request-hec-tokens.md

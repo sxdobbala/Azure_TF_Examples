@@ -1,0 +1,54 @@
+### YamlMime:LandingPage
+
+title: Transit Hub
+summary: The Transit Hub provides regional virtual WAN services including Site-to-Site VPN connectivity for data centers and end-customers.
+
+metadata:
+  title: Transit Hub
+  description: The Transit Hub provides regional virtual WAN services including Site-to-Site VPN connectivity for data centers and end-customers.
+  services: azure
+  topic: hub
+  author: bashey
+  date: 05/29/2021
+
+landingContent:
+  - title: About Transit Hub
+    linkLists:
+      - linkListType: overview
+        links:
+          - text: Transit Hub Overview
+            url: overview.html
+            target: _self
+  - title: Common Tasks
+    linkLists:
+      - linkListType: how-to-guide
+        links:
+          - text: Request a Firewall Change
+            url: how-to-change-firewall-policy.html
+            target: _self
+          - text: Request Transit Hub IP Space
+            url: how-to-request-ip-space.html
+            target: _self
+          - text: Request or Change a VPN
+            url: how-to-request-vpn.html
+            target: _self
+  - title: Architecture
+    linkLists:
+      - linkListType: architecture
+        links:
+          - text: Firewall Architecture
+            url: architecture-firewalls.html
+            target: _self
+          - text: VPN Architecture
+            url: architecture-vpn.html
+            target: _self
+          - text: Virtual WAN Architecture
+            url: architecture-virtual-wan.html
+            target: _self
+  - title: More Resources
+    linkLists:
+      - linkListType: tools
+        links:
+          - text: CIDR Calculator
+            url: https://www.ipaddressguide.com/cidr
+            target: _blank

@@ -1,0 +1,51 @@
+### YamlMime:LandingPage
+
+title: Observability @Provider
+summary: Learn how Provider has implemented a world class observability platform based around Splunk's suite of products.
+description: Learn how Provider has implemented a world class observability platform based around Splunk's suite of products.
+
+metadata:
+  title: Observability @Provider
+  description: Learn how Provider has implemented a world class observability platform based around Splunk's suite of products.
+  ms.topic: landing-page
+  ms.service: dojo-service
+  ms.date: 08/06/2020
+
+
+landingContent:
+  - title: Concepts
+    linkLists:
+      - linkListType: overview
+        links:
+          - text: Observability Concepts
+            url: observability-concepts.html
+            target: _self
+          - text: Policies and Service Levels
+            url: policies.html
+            target: _self
+  - title: Get started
+    linkLists:
+      - linkListType: how-to-guide
+        links:
+          - text: Request Access to Splunk Core
+            url: how-to-request-access-to-splunk-core.html
+            target: _self
+          - text: Request Access to Splunk Observability
+            url: how-to-request-access-to-observability.html
+            target: _self
+          - text: Request Access to Splunk On-Call
+            url: how-to-request-access-to-splunk-oncall.html
+            target: _self
+  - title: Direct links
+    linkLists:
+      - linkListType: quickstart
+        links:
+          - text: Splunk Core
+            url: https://splunk.o360.cloud
+            target: _blank
+          - text: Splunk Observability
+            url: https://optum-provider.signalfx.com
+            target: _blank
+          - text: Splunk On-Call
+            url: https://portal.victorops.com
+            target: _blank          

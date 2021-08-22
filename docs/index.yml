@@ -1,0 +1,28 @@
+### YamlMime:DocIndex
+
+title: Dojo Docs
+summary: Learn how to build and manage powerful applications at Optum. Get documentation, example code, tutorials, and more.
+description: Learn how to build and manage powerful applications at Optum. Get documentation, example code, tutorials, and more.
+
+metadata:
+  title: Dojo Docs
+  description: Learn how to build and manage powerful applications at Optum. Get documentation, example code, tutorials, and more.
+  services: dojo-docs
+  topic: index
+  author: bashey
+  date: 05/29/2021
+
+index:
+  items:
+    - title: Amazon Web Services (AWS)
+      url: cloud/aws/index.html
+    - title: Azure
+      url: cloud/azure/hub.html
+    - title: DevOps
+      url: devops/index.html
+    - title: Dojo
+      url: dojo/index.html
+    - title: Observability
+      url: devops/observability/index.html
+    - title: Optum Communities
+      url: communities/index.html

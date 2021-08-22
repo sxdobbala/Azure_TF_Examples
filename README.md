@@ -1,2 +1,2 @@
-# TFaC
-TF as Code Repo
+# dojo-docs
+The documentation repository for Dojo content.

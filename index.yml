@@ -1,0 +1,48 @@
+### YamlMime:HomePage
+
+title: Dojo
+summary: Learn how to build and manage powerful applications at Optum. Get documentation, example code, tutorials, and more.
+
+metadata:
+  title: Dojo
+  description: Learn how to build and manage powerful applications at Optum. Get documentation, example code, tutorials, and more.
+  services: dojo
+  topic: home-page
+  author: bashey
+  date: 05/29/2021
+
+alert:
+  action_call: Public cloud logins are changing
+  description: Make sure you are following the instructions from the Greenfield team to create your cloud native logins on Azure or AWS!
+  url_text: Learn More
+  url: https://cloud.optum.com/docs/getting-started/entid-decom-faqs/
+  url_target: _blank
+
+featurettes:
+  - supertitle: Observability
+    image_url: /media/sfx-infra.png
+    title: Understand your application's health today
+    title_url: docs/devops/observability/index.yml
+    title_url_target: _self
+    summary: Review Provider's world class observability platform encompassing logging, APM, RUM, Synthetics, and more.
+    second_url_text: View Provider's Dashboard
+    second_url: https://optum-provider.signalfx.com
+    second_url_target: _blank 
+  - supertitle: connectivity
+    image_url: /media/azure-vwan.png
+    title: Connect to customers, data centers, or clouds
+    title_url: /docs/devops/services/transit-hub/index.html
+    title_url_target: _self
+    summary: Establish connectivity across regions and customers utilizing Provider's Transit Hub regional network.
+    second_url_text: Request a DevOps Engagement
+    second_url: /docs/devops/itsm/service-now-engagement.html
+    second_url_target: _self
+  - supertitle: Infrastructure as code
+    image_url: /media/terraform14.png
+    title: Upgrade your terraform today
+    title_url: /docs/devops/cicd/terraform14-upgrade.html
+    title_url_target: _self
+    summary: Learn the non-destructive path to upgrading your terraform to version 14.
+    second_url_text: Read Hashicorp's own guidance
+    second_url: https://www.terraform.io/upgrade-guides/0-14.html
+    second_url_target: _blank 
